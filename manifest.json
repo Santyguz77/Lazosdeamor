@@ -1,0 +1,38 @@
+{
+  "name": "Lazos de Amor - Tienda",
+  "short_name": "Lazos de Amor",
+  "description": "Lazos de Amor - Accesorios y detalles con amor",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f3f0",
+  "theme_color": "#FF5E5E",
+  "orientation": "any",
+  "categories": ["business", "food"],
+  "icons": [
+    {
+      "src": "/inicio.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/inicio.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
