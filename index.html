@@ -289,6 +289,19 @@
 			font-size: 18px;
 			color: #64748b;
 		}
+
+		.loading-spinner {
+			width: 48px;
+			height: 48px;
+			border: 4px solid rgba(148, 163, 184, 0.3);
+			border-top-color: #FF5E5E;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
 		
 		/* Form */
 		.form-group {
@@ -1019,7 +1032,9 @@
 			</div>
 			<div class="form-group">
 				<label>Categoría</label>
-				<input type="text" id="item-category" placeholder="Ej: Bolsos">
+				<input type="text" id="item-category" list="categories-list" placeholder="Ej: Bolsos" autocomplete="off">
+				<datalist id="categories-list"></datalist>
+				<small style="color: var(--muted); display: block; margin-top: 4px;">Selecciona una categoría existente o escribe una nueva</small>
 			</div>
 			<div class="form-row">
 				<div class="form-group" style="flex: 1;">
@@ -1044,11 +1059,11 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label>Imagen del Producto</label>
-				<input type="file" id="item-image-file" accept="image/*" onchange="handleImageUpload(this)" style="width: 100%;">
-				<small style="color: var(--muted); display: block; margin-top: 4px;">Sube una imagen desde tu dispositivo</small>
-				<div id="item-image-preview" style="margin-top: 10px;"></div>
-				<input type="hidden" id="item-image">
+				<label>Imágenes del Producto (hasta 3)</label>
+				<input type="file" id="item-image-file" accept="image/*" multiple onchange="handleMultipleImageUpload(this)" style="width: 100%;">
+				<small style="color: var(--muted); display: block; margin-top: 4px;">Puedes subir hasta 3 imágenes. La primera será la imagen principal</small>
+				<div id="item-images-preview" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+				<input type="hidden" id="item-images" value="[]">
 			</div>
 			<div class="form-group">
 				<label>
@@ -1163,6 +1178,21 @@
 						<button class="btn btn-secondary" onclick="closeOrderModal()" style="width: 100%;">Cancelar</button>
 					</div>
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal Estado de Operación -->
+	<div id="operation-status-modal" class="modal">
+		<div class="panel" style="max-width: 360px; text-align: center; padding: 32px 28px;">
+			<div id="operation-status-loading" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+				<div class="loading-spinner"></div>
+				<p id="operation-status-message" style="margin: 0; color: #64748b; font-weight: 600;">Procesando...</p>
+			</div>
+			<div id="operation-status-error" style="display: none; flex-direction: column; align-items: center; gap: 16px;">
+				<span class="material-icons-round" style="font-size: 46px; color: #ef4444;">error_outline</span>
+				<p id="operation-status-error-message" style="margin: 0; color: #1e293b; line-height: 1.5;"></p>
+				<button class="btn btn-secondary" onclick="closeOperationStatusModal()" style="width: 100%; font-weight: 600;">Entendido</button>
 			</div>
 		</div>
 	</div>
@@ -2476,11 +2506,18 @@
 			const cost = item.cost || 0;
 			const profit = item.price - cost;
 			const margin = item.price > 0 ? ((profit / item.price) * 100).toFixed(1) : 0;
+			// Obtener imágenes (compatibilidad con formato antiguo y nuevo)
+			const images = item.images && item.images.length > 0 ? item.images : (item.image ? [item.image] : []);
+			const mainImage = images.length > 0 ? images[0] : '';
+			
 			return `
 				<tr>
 					<td data-label="Producto">
 						<div style="display: flex; align-items: center; gap: 10px;">
-							${item.image ? `<img src="${item.image}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">` : ''}
+							<div style="position: relative;">
+								${mainImage ? `<img src="${mainImage}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">` : ''}
+								${images.length > 1 ? `<span style="position: absolute; bottom: -4px; right: -4px; background: var(--accent); color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border: 2px solid white;">+${images.length - 1}</span>` : ''}
+							</div>
 							<strong>${item.name}</strong>
 						</div>
 					</td>
@@ -2548,17 +2585,29 @@
 					
 					<!-- Imagen y detalles básicos -->
 					<div style="display: flex; gap: 16px; margin-bottom: 16px;">
-						${item.image ? `
-							<div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: #f8f9fa;">
-								<img src="${item.image}" style="width: 100%; height: 100%; object-fit: cover;">
-							</div>
-						` : `
-							<div style="width: 80px; height: 80px; border-radius: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-								<span class="material-icons-round" style="font-size: 40px; color: #cbd5e1;">checkroom</span>
-							</div>
-						`}
+					${(() => {
+						const images = item.images && item.images.length > 0 ? item.images : (item.image ? [item.image] : []);
+						const mainImage = images.length > 0 ? images[0] : '';
 						
-						<div style="flex: 1; min-width: 0;">
+						if (mainImage) {
+							return `
+								<div style="position: relative; width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: #f8f9fa;">
+									<img src="${mainImage}" style="width: 100%; height: 100%; object-fit: cover;">
+									${images.length > 1 ? `
+										<div style="position: absolute; bottom: 4px; right: 4px; background: var(--accent); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+											+${images.length - 1}
+										</div>
+									` : ''}
+								</div>
+							`;
+						} else {
+							return `
+								<div style="width: 80px; height: 80px; border-radius: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+									<span class="material-icons-round" style="font-size: 40px; color: #cbd5e1;">checkroom</span>
+								</div>
+							`;
+						}
+					})()}
 							<h3 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 700; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.name}</h3>
 							<p style="margin: 0 0 8px 0; font-size: 13px; color: #64748b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description || 'Sin descripción'}</p>
 							<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-block;">${item.category}</span>
@@ -2630,77 +2679,169 @@
 	}
 
 		function openMenuItemModal(itemId = null) {
-			if (itemId) {
-				currentEditingMenuItem = AppState.menuItems.find(i => i.id === itemId);
-				document.getElementById('menu-item-modal-title').textContent = 'Editar Producto';
-				document.getElementById('item-name').value = currentEditingMenuItem.name;
-				document.getElementById('item-description').value = currentEditingMenuItem.description || '';
-				document.getElementById('item-category').value = currentEditingMenuItem.category;
-				document.getElementById('item-cost').value = currentEditingMenuItem.cost || 0;
-				document.getElementById('item-price').value = currentEditingMenuItem.price;
-				document.getElementById('item-available').checked = currentEditingMenuItem.available;
-				document.getElementById('item-image').value = currentEditingMenuItem.image || '';
-				if (currentEditingMenuItem.image) {
-					showImagePreview(currentEditingMenuItem.image);
-				} else {
-					clearImagePreview();
-				}
-				updateProfitPreview();
-			} else {
-				currentEditingMenuItem = null;
-				document.getElementById('menu-item-modal-title').textContent = 'Nuevo Producto';
-				document.getElementById('item-name').value = '';
-				document.getElementById('item-description').value = '';
-				document.getElementById('item-category').value = '';
-				document.getElementById('item-cost').value = '0';
-				document.getElementById('item-price').value = '';
-				document.getElementById('item-available').checked = true;
-				document.getElementById('item-image').value = '';
-				document.getElementById('profit-preview').style.display = 'none';
-				clearImagePreview();
+		// Actualizar lista de categorías disponibles
+		populateCategoriesList();
+		
+		if (itemId) {
+			currentEditingMenuItem = AppState.menuItems.find(i => i.id === itemId);
+			document.getElementById('menu-item-modal-title').textContent = 'Editar Producto';
+			document.getElementById('item-name').value = currentEditingMenuItem.name;
+			document.getElementById('item-description').value = currentEditingMenuItem.description || '';
+			document.getElementById('item-category').value = currentEditingMenuItem.category;
+			document.getElementById('item-cost').value = currentEditingMenuItem.cost || 0;
+			document.getElementById('item-price').value = currentEditingMenuItem.price;
+			document.getElementById('item-available').checked = currentEditingMenuItem.available;
+			
+			// Manejar imágenes (compatibilidad con formato antiguo y nuevo)
+			let images = [];
+			if (currentEditingMenuItem.images && Array.isArray(currentEditingMenuItem.images)) {
+				images = currentEditingMenuItem.images;
+			} else if (currentEditingMenuItem.image) {
+				images = [currentEditingMenuItem.image];
 			}
-			document.getElementById('menu-item-modal').classList.add('show');
-		}
-
-		function closeMenuItemModal() {
-			document.getElementById('menu-item-modal').classList.remove('show');
+			document.getElementById('item-images').value = JSON.stringify(images);
+			showImagesPreview(images);
+			
+			updateProfitPreview();
+		} else {
 			currentEditingMenuItem = null;
+			document.getElementById('menu-item-modal-title').textContent = 'Nuevo Producto';
+			document.getElementById('item-name').value = '';
+			document.getElementById('item-description').value = '';
+			document.getElementById('item-category').value = '';
+			document.getElementById('item-cost').value = '0';
+			document.getElementById('item-price').value = '';
+			document.getElementById('item-available').checked = true;
+			document.getElementById('item-images').value = '[]';
+			document.getElementById('profit-preview').style.display = 'none';
+			clearImagesPreview();
+		}
+		document.getElementById('menu-item-modal').classList.add('show');
+	}
+
+	function closeMenuItemModal() {
+		document.getElementById('menu-item-modal').classList.remove('show');
+		currentEditingMenuItem = null;
+	}
+
+	// Poblar lista de categorías existentes
+	function populateCategoriesList() {
+		const datalist = document.getElementById('categories-list');
+			
+			// Obtener categorías únicas de todos los productos
+			const categories = [...new Set(AppState.menuItems.map(item => item.category))].sort();
+			
+			// Limpiar y repoblar el datalist
+			datalist.innerHTML = categories.map(cat => `<option value="${cat}">`).join('');
 		}
 
 		function editMenuItem(itemId) {
 			openMenuItemModal(itemId);
 		}
 
-		// Manejar carga de imagen
-		function handleImageUpload(input) {
-			if (input.files && input.files[0]) {
-				const reader = new FileReader();
-				reader.onload = function(e) {
-					const imageData = e.target.result;
-					document.getElementById('item-image').value = imageData;
-					showImagePreview(imageData);
-				};
-				reader.readAsDataURL(input.files[0]);
+	// Utilidades para procesar imágenes antes de guardar
+	async function readFileAsDataURL(file) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = () => reject(reader.error || new Error('Error leyendo archivo'));
+			reader.readAsDataURL(file);
+		});
+	}
+
+	async function compressImageFile(file, maxDimension = 1280) {
+		const originalDataUrl = await readFileAsDataURL(file);
+		return new Promise((resolve, reject) => {
+			const image = new Image();
+			image.onload = () => {
+				let { width, height } = image;
+				const needsResize = width > maxDimension || height > maxDimension;
+				if (needsResize) {
+					const scale = Math.min(maxDimension / width, maxDimension / height);
+					width = Math.round(width * scale);
+					height = Math.round(height * scale);
+				}
+				const canvas = document.createElement('canvas');
+				canvas.width = width;
+				canvas.height = height;
+				const ctx = canvas.getContext('2d');
+				ctx.drawImage(image, 0, 0, width, height);
+				const isPng = file.type === 'image/png';
+				const outputType = isPng ? 'image/png' : 'image/jpeg';
+				const quality = isPng ? 0.9 : 0.82;
+				const compressedDataUrl = canvas.toDataURL(outputType, quality);
+				// Si la compresión no ayudó, usar la imagen original
+				if (compressedDataUrl.length >= originalDataUrl.length) {
+					resolve(originalDataUrl);
+				} else {
+					resolve(compressedDataUrl);
+				}
+			};
+			image.onerror = () => reject(new Error('No se pudo procesar la imagen'));
+			image.src = originalDataUrl;
+		});
+	}
+
+	// Manejar carga de múltiples imágenes
+	async function handleMultipleImageUpload(input) {
+		if (!input.files || input.files.length === 0) {
+			return;
+		}
+		const hiddenField = document.getElementById('item-images');
+		const currentImages = JSON.parse(hiddenField.value || '[]');
+		const maxImages = 3;
+		const remainingSlots = maxImages - currentImages.length;
+		if (remainingSlots <= 0) {
+			Utils.showNotification('Ya tienes 3 imágenes. Elimina alguna para agregar más', 'warning');
+			input.value = '';
+			return;
+		}
+		const filesToProcess = Array.from(input.files).slice(0, remainingSlots);
+		const processedImages = [];
+		for (const file of filesToProcess) {
+			try {
+				const optimizedImage = await compressImageFile(file);
+				processedImages.push(optimizedImage);
+			} catch (error) {
+				console.error('Error procesando imagen:', error);
+				Utils.showNotification(`No se pudo procesar ${file.name}`, 'warning');
 			}
 		}
-
-		function showImagePreview(imageUrl) {
-			if (!imageUrl) {
-				document.getElementById('item-image-preview').innerHTML = '';
-				return;
-			}
-			document.getElementById('item-image-preview').innerHTML = `
-				<div style="position: relative; display: inline-block;">
-					<img src="${imageUrl}" style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 2px solid var(--accent);">
-					<button onclick="clearImagePreview()" style="position: absolute; top: 5px; right: 5px; background: var(--danger); color: #fff; border: 0; border-radius: 50%; width: 25px; height: 25px; cursor: pointer;">✕</button>
-				</div>
-			`;
+		if (processedImages.length > 0) {
+			const updatedImages = currentImages.concat(processedImages).slice(0, maxImages);
+			hiddenField.value = JSON.stringify(updatedImages);
+			showImagesPreview(updatedImages);
 		}
+		input.value = '';
+	}
 
-		function clearImagePreview() {
-			document.getElementById('item-image').value = '';
-			document.getElementById('item-image-file').value = '';
-			document.getElementById('item-image-preview').innerHTML = '';
+	function showImagesPreview(images) {
+		const container = document.getElementById('item-images-preview');
+		if (!images || images.length === 0) {
+			container.innerHTML = '';
+			return;
+		}
+		
+		container.innerHTML = images.map((imageUrl, index) => `
+			<div style="position: relative; display: inline-block;">
+				<img src="${imageUrl}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid var(--accent);">
+				<button onclick="removeImage(${index})" style="position: absolute; top: 5px; right: 5px; background: var(--danger); color: #fff; border: 0; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 16px; line-height: 1;">✕</button>
+				${index === 0 ? '<div style="position: absolute; bottom: 5px; left: 5px; background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">PRINCIPAL</div>' : ''}
+			</div>
+		`).join('');
+	}
+
+	function removeImage(index) {
+		const images = JSON.parse(document.getElementById('item-images').value || '[]');
+		images.splice(index, 1);
+		document.getElementById('item-images').value = JSON.stringify(images);
+		showImagesPreview(images);
+	}
+
+	function clearImagesPreview() {
+		document.getElementById('item-images').value = '[]';
+		document.getElementById('item-image-file').value = '';
+		document.getElementById('item-images-preview').innerHTML = '';
 		}
 
 		function updateProfitPreview() {
@@ -2719,6 +2860,45 @@
 			}
 		}
 
+		function showOperationLoading(message = 'Procesando...') {
+			const modal = document.getElementById('operation-status-modal');
+			const loading = document.getElementById('operation-status-loading');
+			const error = document.getElementById('operation-status-error');
+			const messageEl = document.getElementById('operation-status-message');
+			if (!modal || !loading || !error || !messageEl) {
+				return;
+			}
+			messageEl.textContent = message;
+			loading.style.display = 'flex';
+			error.style.display = 'none';
+			modal.classList.add('show');
+		}
+
+		function showOperationError(message = 'No se pudo completar la acción. Intenta nuevamente.') {
+			const modal = document.getElementById('operation-status-modal');
+			const loading = document.getElementById('operation-status-loading');
+			const error = document.getElementById('operation-status-error');
+			const errorMessage = document.getElementById('operation-status-error-message');
+			if (!modal || !loading || !error || !errorMessage) {
+				return;
+			}
+			loading.style.display = 'none';
+			error.style.display = 'flex';
+			errorMessage.textContent = message;
+			modal.classList.add('show');
+		}
+
+		function hideOperationStatusModal() {
+			const modal = document.getElementById('operation-status-modal');
+			if (modal) {
+				modal.classList.remove('show');
+			}
+		}
+
+		function closeOperationStatusModal() {
+			hideOperationStatusModal();
+		}
+
 		async function saveMenuItem() {
 			const name = document.getElementById('item-name').value.trim();
 			const description = document.getElementById('item-description').value.trim();
@@ -2726,25 +2906,34 @@
 			const cost = parseFloat(document.getElementById('item-cost').value) || 0;
 			const price = parseFloat(document.getElementById('item-price').value);
 			const available = document.getElementById('item-available').checked;
-			const image = document.getElementById('item-image').value.trim();
+			const images = JSON.parse(document.getElementById('item-images').value || '[]');
 
 			if (!name || !category || !price) {
 				Utils.showNotification('Completa los campos requeridos', 'warning');
 				return;
 			}
 
+			let itemToSave = null;
 			if (currentEditingMenuItem) {
-				currentEditingMenuItem.name = name;
-				currentEditingMenuItem.description = description;
-				currentEditingMenuItem.category = category;
-				currentEditingMenuItem.cost = cost;
-				currentEditingMenuItem.price = price;
-				currentEditingMenuItem.available = available;
-				currentEditingMenuItem.image = image;
 				const index = AppState.menuItems.findIndex(i => i.id === currentEditingMenuItem.id);
-				AppState.menuItems[index] = currentEditingMenuItem;
+				if (index === -1) {
+					Utils.showNotification('No se encontró el producto para editar', 'error');
+					return;
+				}
+				itemToSave = {
+					...currentEditingMenuItem,
+					name,
+					description,
+					category,
+					cost,
+					price,
+					available,
+					images,
+					image: images.length > 0 ? images[0] : ''
+				};
+				AppState.menuItems[index] = itemToSave;
 			} else {
-				AppState.menuItems.push({
+				itemToSave = {
 					id: Utils.generateId(),
 					name,
 					description,
@@ -2752,43 +2941,68 @@
 					cost,
 					price,
 					available,
-					image
-				});
+					images,
+					image: images.length > 0 ? images[0] : ''
+				};
+				AppState.menuItems.push(itemToSave);
 			}
 
-			await API.save('menu_items', AppState.menuItems);
+			showOperationLoading('Guardando producto...');
+			try {
+				await API.update('menu_items', itemToSave.id, itemToSave);
+				hideOperationStatusModal();
+			} catch (error) {
+				console.error('Error guardando producto:', error);
+				showOperationError('No se pudo guardar el producto. Verifica tu conexión e intenta nuevamente.');
+				return;
+			}
+
 			closeMenuItemModal();
 			renderMenuConfig();
 			Utils.showNotification('Producto guardado', 'success');
 		}
 
-		async function deleteMenuItem(itemId) {
-			if (!confirm('¿Eliminar este producto?')) return;
-			AppState.menuItems = AppState.menuItems.filter(i => i.id !== itemId);
-			await API.save('menu_items', AppState.menuItems);
-			renderMenuConfig();
-			Utils.showNotification('Producto eliminado', 'success');
-		}
+			async function deleteMenuItem(itemId) {
+				if (!confirm('¿Eliminar este producto?')) return;
+				const index = AppState.menuItems.findIndex(i => i.id === itemId);
+				if (index === -1) {
+					Utils.showNotification('Producto no encontrado', 'warning');
+					return;
+				}
+				const [removedItem] = AppState.menuItems.splice(index, 1);
+				renderMenuConfig();
+				showOperationLoading('Eliminando producto...');
+				try {
+					await API.delete('menu_items', itemId);
+					hideOperationStatusModal();
+					Utils.showNotification('Producto eliminado', 'success');
+				} catch (error) {
+					console.error('Error eliminando producto:', error);
+					AppState.menuItems.splice(index, 0, removedItem);
+					renderMenuConfig();
+					showOperationError('No se pudo eliminar el producto. Intenta de nuevo.');
+				}
+			}
 
-		async function toggleProductAvailability(itemId) {
-			const item = AppState.menuItems.find(i => i.id === itemId);
-			if (!item) return;
-			
-			// Cambiar el estado
-			item.available = !item.available;
-			
-			// Actualizar UI inmediatamente
-			renderMenuConfig();
-			
-			// Guardar en servidor en segundo plano
-			API.save('menu_items', AppState.menuItems).catch(error => {
-				console.error('Error guardando disponibilidad:', error);
-				// Revertir cambio si falla
+			async function toggleProductAvailability(itemId) {
+				const item = AppState.menuItems.find(i => i.id === itemId);
+				if (!item) {
+					Utils.showNotification('Producto no encontrado', 'warning');
+					return;
+				}
 				item.available = !item.available;
 				renderMenuConfig();
-				alert('⚠️ Error al actualizar. Intenta de nuevo.');
-			});
-		}
+				showOperationLoading('Actualizando producto...');
+				try {
+					await API.update('menu_items', item.id, item);
+					hideOperationStatusModal();
+				} catch (error) {
+					console.error('Error actualizando disponibilidad:', error);
+					item.available = !item.available;
+					renderMenuConfig();
+					showOperationError('No se pudo actualizar la disponibilidad. Intenta de nuevo.');
+				}
+			}
 
 		// TRANSACCIONES
 		function renderTransactions() {
@@ -3359,6 +3573,10 @@
 					canvas.height = size;
 					const ctx = canvas.getContext('2d');
 					
+					// Limpiar canvas con fondo blanco/transparente
+					ctx.fillStyle = '#FFFFFF';
+					ctx.fillRect(0, 0, size, size);
+					
 					// Dibujar círculo y usar como máscara
 					ctx.beginPath();
 					ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
@@ -3513,7 +3731,7 @@
 			doc.text('Gracias por tu compra', pageWidth / 2, pageHeight - 20, { align: 'center' });
 			doc.setFontSize(9);
 			doc.text('Lazos de Amor - Accesorios y Detalles | Con amor en cada detalle', pageWidth / 2, pageHeight - 14, { align: 'center' });
-			doc.text('¿Dudas? Contáctanos al WhatsApp: +57 322 778 1179', pageWidth / 2, pageHeight - 9, { align: 'center' });
+			doc.text('¿Dudas? Contáctanos al WhatsApp: +57 320 243 4814', pageWidth / 2, pageHeight - 9, { align: 'center' });
 
 // Generar PDF y retornar base64
 		const pdfBase64 = doc.output('dataurlstring');

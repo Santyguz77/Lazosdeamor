@@ -1,5 +1,5 @@
 // Configuración de la API
-const API_URL = 'https://wireless-html-mods-absence.trycloudflare.com/api'; // Cambiar por tu VPS en producción
+const API_URL = 'https://tribunal-strong-flags-testing.trycloudflare.com/api'; // Cambiar por tu VPS en producción
 const APP_TIMEZONE = 'America/Bogota';
 
 // Estado global de la aplicación
