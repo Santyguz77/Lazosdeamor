@@ -1,5 +1,5 @@
 // Configuración de la API
-const API_URL = 'https://tribunal-strong-flags-testing.trycloudflare.com/api'; // Cambiar por tu VPS en producción
+const API_URL = 'https://tribunal-strong-flags-testing.trycloudflare.com/api';
 const APP_TIMEZONE = 'America/Bogota';
 
 // Estado global de la aplicación
@@ -31,7 +31,7 @@ const Storage = {
 const API = {
 	async getAll(table) {
 		try {
-			const response = await fetch(`${API_URL}/${table}`, { 
+			const response = await fetch(`${API_URL}/${table}`, {
 				timeout: 10000 // 10 segundos timeout
 			});
 			if (!response.ok) {
@@ -45,7 +45,7 @@ const API = {
 			throw error;
 		}
 	},
-	
+
 	async save(table, items, retries = 2) {
 		for (let i = 0; i <= retries; i++) {
 			try {
@@ -66,7 +66,7 @@ const API = {
 			}
 		}
 	},
-	
+
 	async update(table, id, item) {
 		try {
 			const response = await fetch(`${API_URL}/${table}/${id}`, {
@@ -81,7 +81,7 @@ const API = {
 			throw error;
 		}
 	},
-	
+
 	async delete(table, id) {
 		try {
 			const response = await fetch(`${API_URL}/${table}/${id}`, {
@@ -101,7 +101,7 @@ const Utils = {
 	generateId() {
 		return Date.now().toString(36) + Math.random().toString(36).substr(2);
 	},
-	
+
 	formatCurrency(amount) {
 		return new Intl.NumberFormat('es-CO', {
 			style: 'currency',
@@ -110,7 +110,7 @@ const Utils = {
 			maximumFractionDigits: 0
 		}).format(amount);
 	},
-	
+
 	formatDate(date) {
 		return new Intl.DateTimeFormat('es-MX', {
 			year: 'numeric',
@@ -167,7 +167,7 @@ const Utils = {
 			day: 'numeric'
 		}).format(anchor);
 	},
-	
+
 	showNotification(message, type = 'info') {
 		console.log(`[${type.toUpperCase()}] ${message}`);
 		// Solo mostrar alertas para errores críticos
@@ -204,7 +204,7 @@ async function loadInitialData() {
 		AppState.orders = await API.getAll('orders');
 		AppState.transactions = await API.getAll('transactions');
 		AppState.waiters = await API.getAll('waiters');
-		
+
 		// Intentar cargar cash_closures, si falla, usar array vacío
 		try {
 			AppState.cashClosures = await API.getAll('cash_closures');
@@ -212,7 +212,7 @@ async function loadInitialData() {
 			console.warn('⚠️ Tabla cash_closures no disponible en el servidor');
 			AppState.cashClosures = [];
 		}
-		
+
 		const configArray = await API.getAll('config');
 		AppState.config = configArray.length > 0 ? configArray[0] : {};
 	} catch (error) {
@@ -224,32 +224,36 @@ async function loadInitialData() {
 // Inicializar datos de ejemplo si no existen
 async function initializeDefaultData() {
 	if (AppState.menuItems.length === 0) {
+		// Si no hay datos, cargar ejemplos iniciales de LAZOS DE AMOR
 		AppState.menuItems = [
 			{
 				id: Utils.generateId(),
-				name: 'Hamburguesa Clásica',
-				description: 'Carne de res, lechuga, tomate, queso',
-				cost: 21000,
-				price: 30000,
-				category: 'Hamburguesas',
+				name: 'Bolso Macramé Crudo',
+				description: 'Bolso tejido a mano en hilo de algodón color crudo. Diseño elegante y espacioso.',
+				cost: 45000,
+				price: 85000,
+				category: 'Macramé',
+				image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBk6smYy2Mm-f3m_jaZGjaNaTiCZk7WJoDuXJ2XvpQdVBqjbxeHZBapk_oryfTLJ_p3b0JBfZPYOh_vaiaa1kTS2QbuTlv8ZU53vJAftgMuP2RaKvPxvey4jmui8MtvGY2ubBrC1yvcbBoQx4uXHx47VbaLRfhQt42kq8jQTmyNkPDuGhjMYDWFIiygY9badWq5eGbfCeJUOMyqUaJTdUXDag9CIvqI35s6uGg9xciuIZccIxrN1j1YVvBC4FYScSLtAH502Y5jDmc',
 				available: true
 			},
 			{
 				id: Utils.generateId(),
-				name: 'Pizza Margarita',
-				description: 'Tomate, mozzarella, albahaca',
-				cost: 0,
-				price: 25000,
-				category: 'Pizzas',
+				name: 'Cartera Zuncho Colorida',
+				description: 'Cartera resistente tejida en zuncho con patrones geométricos vibrantes.',
+				cost: 35000,
+				price: 65000,
+				category: 'Bolsos en Zuncho',
+				image: 'zuncho_artesanal.png',
 				available: true
 			},
 			{
 				id: Utils.generateId(),
-				name: 'Ensalada César',
-				description: 'Lechuga romana, pollo, crutones, parmesano',
-				cost: 0,
-				price: 12000,
-				category: 'Ensaladas',
+				name: 'Cesta Organizadora',
+				description: 'Cesta tejida en trapillo ideal para organizar espacios con estilo.',
+				cost: 25000,
+				price: 45000,
+				category: 'Trapillo Sostenible',
+				image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBb22GOqiBV3DeTE7F8-8QgWOmKaEbZVPAUkwa1czfqVAN6wcTs7nDkuPXcNxPUhKZ5EhCdubA4EXwfnzccyYH2Vgn9cGljielLhFylJDi_m51lnyIxlWkVgpxdjGWyLjFSL1IAa0PwmRzEJDR8y5r8_BvC6QvJtH5Rz7z4ZtXgG8qK_l8J3bJ4Z5yL9XwQ9zH3jK5nM2P4rT8qVw6xY7uZ9aO1bC3dE5fG7hI9jL0mK2nO4pQ6sR8tU9vW1xY3zA5bC7d9eF1gH3jI5kL7mN9oP2rS',
 				available: true
 			}
 		];
@@ -262,12 +266,23 @@ async function initializeDefaultData() {
 				item.cost = 0;
 				needsUpdate = true;
 			}
+			// Migración: Convertir img único a array images
+			if (item.img && !item.images) {
+				item.images = [item.img];
+				delete item.img;
+				needsUpdate = true;
+			}
+			// Asegurar que images sea un array (por si acaso)
+			if (!item.images || !Array.isArray(item.images)) {
+				item.images = [];
+				needsUpdate = true;
+			}
 		});
 		if (needsUpdate) {
 			await API.save('menu_items', AppState.menuItems);
 		}
 	}
-	
+
 	if (AppState.waiters.length === 0) {
 		AppState.waiters = [
 			{

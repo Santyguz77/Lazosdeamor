@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lazosdeamor-v20-splash-screen';
+const CACHE_NAME = 'lazosdeamor-v21-splash-screen';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -67,7 +67,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
     const { title, options } = event.data;
-    
+
     self.registration.showNotification(title, options);
   }
 });
@@ -75,7 +75,7 @@ self.addEventListener('message', event => {
 // Manejar clics en notificaciones
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  
+
   // Abrir o enfocar la ventana de la aplicación
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
