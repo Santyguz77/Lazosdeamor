@@ -1271,6 +1271,77 @@
             </button>
           </div>
         </div>
+        <div class="card" style="margin-bottom: 20px">
+          <h3 style="color: #4CAF50; margin-bottom: 15px">💾 Respaldo de Datos</h3>
+          <p style="color: var(--muted); margin-bottom: 20px">
+            Descarga una copia de seguridad de todos los datos del sistema: productos, pedidos, transacciones y configuración.
+          </p>
+          <div style="
+                background: rgba(76, 175, 80, 0.1);
+                border: 2px solid #4CAF50;
+                padding: 20px;
+                border-radius: 8px;
+              ">
+            <div style="
+                  display: flex;
+                  align-items: center;
+                  gap: 15px;
+                  margin-bottom: 15px;
+                ">
+              <span style="font-size: 40px">📦</span>
+              <div style="flex: 1">
+                <h4 style="color: #4CAF50; margin-bottom: 5px">
+                  Backup Completo del Sistema
+                </h4>
+                <p style="color: var(--muted); font-size: 14px; margin: 0">
+                  Incluye: productos, pedidos, transacciones, cierres de caja y configuración.
+                </p>
+              </div>
+            </div>
+            <ul style="
+                  color: var(--muted);
+                  margin: 15px 0;
+                  padding-left: 25px;
+                  font-size: 14px;
+                ">
+              <li>✓ Productos del catálogo con imágenes y precios</li>
+              <li>✓ Historial de pedidos y transacciones</li>
+              <li>✓ Cierres de caja</li>
+              <li>✓ Configuración del sistema</li>
+            </ul>
+            <button class="btn" style="background: #4CAF50; border: none; width: 100%" onclick="downloadFullBackup()">
+              📥 Descargar Backup Completo
+            </button>
+          </div>
+          <div style="
+                background: rgba(33, 150, 243, 0.1);
+                border: 2px solid #2196F3;
+                padding: 20px;
+                border-radius: 8px;
+                margin-top: 15px;
+              ">
+            <div style="
+                  display: flex;
+                  align-items: center;
+                  gap: 15px;
+                  margin-bottom: 15px;
+                ">
+              <span style="font-size: 40px">📂</span>
+              <div style="flex: 1">
+                <h4 style="color: #2196F3; margin-bottom: 5px">
+                  Restaurar desde Backup
+                </h4>
+                <p style="color: var(--muted); font-size: 14px; margin: 0">
+                  Sube un archivo de backup para restaurar todos los datos del sistema.
+                </p>
+              </div>
+            </div>
+            <input type="file" id="backup-file-input" accept=".json" style="display: none" onchange="handleBackupFile(event)">
+            <button class="btn" style="background: #2196F3; border: none; width: 100%" onclick="document.getElementById('backup-file-input').click()">
+              📤 Seleccionar Archivo de Backup
+            </button>
+          </div>
+        </div>
         <div class="card">
           <h3 style="margin-bottom: 15px">ℹ️ Información del Sistema</h3>
           <div style="
@@ -3528,6 +3599,125 @@
         }
       else alert("Operación cancelada.");
     }
+    
+    // Función para descargar backup completo del sistema
+    function downloadFullBackup() {
+      const backup = {
+        metadata: {
+          fecha: new Date().toISOString(),
+          version: "1.0",
+          app: "Lazos de Amor - Sistema de Gestión"
+        },
+        estadisticas: {
+          total_productos: AppState.menuItems.length,
+          total_pedidos: AppState.orders.length,
+          total_transacciones: AppState.transactions.length,
+          total_cierres_caja: AppState.cashClosures.length
+        },
+        datos: {
+          productos: AppState.menuItems,
+          pedidos: AppState.orders,
+          transacciones: AppState.transactions,
+          cierres_caja: AppState.cashClosures,
+          configuracion: AppState.config
+        }
+      };
+      
+      const dataStr = JSON.stringify(backup, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const fecha = new Date().toISOString().split('T')[0];
+      const hora = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `lazos-backup-completo-${fecha}_${hora}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      alert(`✅ Backup completo descargado!\n\n📦 Contenido:\n• ${AppState.menuItems.length} productos\n• ${AppState.orders.length} pedidos\n• ${AppState.transactions.length} transacciones\n• ${AppState.cashClosures.length} cierres de caja`);
+    }
+    
+    // Función para manejar el archivo de backup subido
+    function handleBackupFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const backup = JSON.parse(e.target.result);
+          
+          // Validar que sea un backup válido
+          if (!backup.datos || !backup.metadata) {
+            alert('❌ Error: El archivo no parece ser un backup válido de Lazos de Amor.');
+            return;
+          }
+          
+          // Mostrar resumen y pedir confirmación
+          const stats = backup.estadisticas || {};
+          const confirmMsg = `⚠️ RESTAURAR BACKUP\n\nEsto reemplazará TODOS los datos actuales con:\n• ${stats.total_productos || 0} productos\n• ${stats.total_pedidos || 0} pedidos\n• ${stats.total_transacciones || 0} transacciones\n• ${stats.total_cierres_caja || 0} cierres de caja\n\nFecha del backup: ${backup.metadata.fecha ? new Date(backup.metadata.fecha).toLocaleString() : 'Desconocida'}\n\n¿Deseas continuar? Escribe "RESTAURAR" para confirmar:`;
+          
+          if (prompt(confirmMsg) !== 'RESTAURAR') {
+            alert('Operación cancelada.');
+            return;
+          }
+          
+          // Restaurar datos
+          const datos = backup.datos;
+          
+          if (datos.productos && Array.isArray(datos.productos)) {
+            AppState.menuItems = datos.productos;
+            await API.save('menu_items', AppState.menuItems);
+          }
+          
+          if (datos.pedidos && Array.isArray(datos.pedidos)) {
+            AppState.orders = datos.pedidos;
+            await API.save('orders', AppState.orders);
+          }
+          
+          if (datos.transacciones && Array.isArray(datos.transacciones)) {
+            AppState.transactions = datos.transacciones;
+            await API.save('transactions', AppState.transactions);
+          }
+          
+          if (datos.cierres_caja && Array.isArray(datos.cierres_caja)) {
+            AppState.cashClosures = datos.cierres_caja;
+            await API.save('cash_closures', AppState.cashClosures);
+          }
+          
+          if (datos.configuracion) {
+            AppState.config = datos.configuracion;
+            await API.save('config', [AppState.config]);
+          }
+          
+          // Actualizar interfaz
+          renderDashboard();
+          renderMenu();
+          renderOrders();
+          renderTransactions();
+          updateSystemInfo();
+          
+          alert(`✅ Backup restaurado exitosamente!\n\nDatos restaurados:\n• ${AppState.menuItems.length} productos\n• ${AppState.orders.length} pedidos\n• ${AppState.transactions.length} transacciones\n• ${AppState.cashClosures.length} cierres de caja`);
+          
+        } catch (error) {
+          console.error('Error al restaurar backup:', error);
+          alert('❌ Error al procesar el archivo: ' + error.message);
+        }
+      };
+      
+      reader.onerror = function() {
+        alert('❌ Error al leer el archivo.');
+      };
+      
+      reader.readAsText(file);
+      
+      // Limpiar el input para permitir subir el mismo archivo de nuevo
+      event.target.value = '';
+    }
+    
     function updateSystemInfo() {
       ((document.getElementById("info-menu-items").textContent =
         AppState.menuItems.length),
