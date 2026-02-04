@@ -252,7 +252,7 @@ async function initializeDefaultData() {
 				description: 'Cesta tejida en trapillo ideal para organizar espacios con estilo.',
 				cost: 25000,
 				price: 45000,
-				category: 'Trapillo Sostenible',
+				category: 'Tejidos Crochet',
 				image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBb22GOqiBV3DeTE7F8-8QgWOmKaEbZVPAUkwa1czfqVAN6wcTs7nDkuPXcNxPUhKZ5EhCdubA4EXwfnzccyYH2Vgn9cGljielLhFylJDi_m51lnyIxlWkVgpxdjGWyLjFSL1IAa0PwmRzEJDR8y5r8_BvC6QvJtH5Rz7z4ZtXgG8qK_l8J3bJ4Z5yL9XwQ9zH3jK5nM2P4rT8qVw6xY7uZ9aO1bC3dE5fG7hI9jL0mK2nO4pQ6sR8tU9vW1xY3zA5bC7d9eF1gH3jI5kL7mN9oP2rS',
 				available: true
 			}
@@ -275,6 +275,15 @@ async function initializeDefaultData() {
 			// Asegurar que images sea un array (por si acaso)
 			if (!item.images || !Array.isArray(item.images)) {
 				item.images = [];
+				needsUpdate = true;
+			}
+			// Migración: Renombrar categorías
+			if (item.category === 'Cuero Artesanal') {
+				item.category = 'Cuero';
+				needsUpdate = true;
+			}
+			if (item.category && item.category.toLowerCase().includes('trapillo')) {
+				item.category = 'Tejidos Crochet';
 				needsUpdate = true;
 			}
 		});
