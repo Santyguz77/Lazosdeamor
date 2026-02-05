@@ -2360,10 +2360,18 @@
       }
     }
 
-    // Guardar productos en caché local
+    // Guardar productos en caché local (Optimizado)
     function cacheProducts(products) {
       try {
-        localStorage.setItem('lazos_products_cache', JSON.stringify(products));
+        // Guardar versión minimizada para ahorrar espacio
+        const minimized = products.map(p => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          price: p.price,
+          image: p.image
+        }));
+        localStorage.setItem('lazos_products_cache', JSON.stringify(minimized));
       } catch (e) {
         console.warn('No se pudo guardar caché:', e);
       }
@@ -2386,7 +2394,16 @@
             const bannerDesc = document.getElementById('dynamic-banner-description');
             const bannerBtn = document.getElementById('dynamic-banner-button');
 
-            if (data.banner.imageUrl && bannerImage) bannerImage.src = data.banner.imageUrl;
+            if (data.banner.imageUrl && bannerImage) {
+              // Fix Mixed Content: Si viene localhost, usar path relativo
+              let safeUrl = data.banner.imageUrl;
+              if (safeUrl.includes('127.0.0.1') || safeUrl.includes('localhost')) {
+                // Extraer solo el nombre del archivo
+                const parts = safeUrl.split('/');
+                safeUrl = parts[parts.length - 1];
+              }
+              bannerImage.src = safeUrl;
+            }
             if (data.banner.title1 && bannerTitle1) bannerTitle1.textContent = data.banner.title1;
             if (data.banner.title2 && bannerTitle2) bannerTitle2.textContent = data.banner.title2;
             if (data.banner.description && bannerDesc) bannerDesc.textContent = data.banner.description;
