@@ -1986,20 +1986,21 @@
     </div>
     <main class="flex-1 space-y-12 px-4 pb-32 pt-8 md:px-8 lg:px-12">
       <section class="relative w-full h-80 md:h-96 rounded-3xl overflow-hidden shadow-soft group">
-        <img src="banner-principal.jpg" alt="Artesanías hechas a mano"
+        <img id="dynamic-banner-image" src="banner-principal.jpg" alt="Artesanías hechas a mano"
           class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           onerror="((this.onerror = null), (this.src = 'image.png'))" />
         <div
           class="absolute inset-0 bg-gradient-to-r from-stone-900/70 to-transparent flex flex-col justify-center px-6">
           <h1 class="font-display text-4xl leading-tight drop-shadow-sm">
-            <span class="hero-heading-white">Lo auténtico se crea</span><br /><span class="text-primary italic">a
+            <span id="dynamic-banner-title1" class="hero-heading-white">Lo auténtico se crea</span><br /><span
+              id="dynamic-banner-title2" class="text-primary italic">a
               mano</span>
           </h1>
-          <p class="text-white/80 text-sm mb-5 max-w-[240px]">
+          <p id="dynamic-banner-description" class="text-white/80 text-sm mb-5 max-w-[240px]">
             Diseños que reflejan cuidado, carácter y calidad.
           </p>
           <div class="flex gap-3">
-            <button
+            <button id="dynamic-banner-button"
               class="bg-primary text-white text-xs font-bold py-2.5 px-5 rounded-full shadow-lg hover:bg-primary-dark transition-colors"
               onclick="
                   document
@@ -2128,21 +2129,21 @@
         </div>
         <div id="catalog-content" class="space-y-12"></div>
       </section>
-      <section
+      <section id="instagram-section"
         class="relative overflow-hidden rounded-3xl bg-secondary/10 p-8 text-center shadow-soft dark:bg-secondary/5">
         <div class="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/20 blur-3xl"></div>
         <div class="pointer-events-none absolute -left-16 -bottom-14 h-44 w-44 rounded-full bg-secondary/20 blur-3xl">
         </div>
         <div class="relative z-10 mx-auto max-w-2xl space-y-4">
-          <h3 class="font-display text-2xl font-semibold text-primary dark:text-white">
+          <h3 id="dynamic-instagram-title" class="font-display text-2xl font-semibold text-primary dark:text-white">
             Síguenos en Instagram
           </h3>
-          <p class="text-sm text-primary/70 dark:text-white/70">
+          <p id="dynamic-instagram-description" class="text-sm text-primary/70 dark:text-white/70">
             Descubre nuestras últimas creaciones, inspiración diaria y el
             detrás de cámaras de cada pieza tejida con amor. Únete a nuestra
             comunidad de artesanías.
           </p>
-          <button
+          <button id="dynamic-instagram-button"
             class="w-full rounded-xl border border-primary px-6 py-3 font-semibold text-primary transition hover:bg-primary hover:text-white"
             onclick="
                 window.open(
@@ -2164,10 +2165,10 @@
             <span
               class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-primary dark:bg-white/10 dark:text-white">Quiénes
               somos</span>
-            <h3 class="font-display text-3xl font-semibold text-primary dark:text-white">
+            <h3 id="dynamic-about-title" class="font-display text-3xl font-semibold text-primary dark:text-white">
               Lazos de Amor - Hecho a Mano
             </h3>
-            <p class="text-sm leading-relaxed text-primary/80 dark:text-white/70">
+            <p id="dynamic-about-description" class="text-sm leading-relaxed text-primary/80 dark:text-white/70">
               Somos una marca artesanal colombiana que transforma materiales reciclados en accesorios únicos. Nuestros
               bolsos en zuncho y piezas en cuero son elaborados completamente a mano, combinando tradición, diseño y
               sostenibilidad en cada creación.
@@ -2175,41 +2176,43 @@
             <ul class="space-y-3 text-sm text-primary/85 dark:text-white/70">
               <li class="flex items-start gap-3">
                 <span class="material-icons-outlined text-base text-secondary">eco</span>
-                <span>Materiales reciclados y sostenibles que dan nueva vida al zuncho y cuero recuperado.</span>
+                <span id="dynamic-about-feature1">Materiales reciclados y sostenibles que dan nueva vida al zuncho y
+                  cuero recuperado.</span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="material-icons-outlined text-base text-secondary">people</span>
-                <span>Cada pieza es tejida y elaborada 100% a mano por artesanas colombianas.</span>
+                <span id="dynamic-about-feature2">Cada pieza es tejida y elaborada 100% a mano por artesanas
+                  colombianas.</span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="material-icons-outlined text-base text-secondary">grass</span>
-                <span>Diseños exclusivos con propósito: ningún bolso es igual a otro.</span>
+                <span id="dynamic-about-feature3">Diseños exclusivos con propósito: ningún bolso es igual a otro.</span>
               </li>
             </ul>
           </div>
           <div
             class="grid gap-4 rounded-3xl bg-primary/5 p-6 text-sm text-primary/90 shadow-inner dark:bg-white/5 dark:text-white/80">
             <div>
-              <p class="text-4xl font-bold text-primary dark:text-green-200">
+              <p id="dynamic-stat1-number" class="text-4xl font-bold text-primary dark:text-green-200">
                 +500
               </p>
-              <p class="mt-1">
+              <p id="dynamic-stat1-text" class="mt-1">
                 Piezas artesanales creadas con amor y entregadas a clientes felices.
               </p>
             </div>
             <div class="border-t border-primary/20 pt-4 dark:border-white/20">
-              <p class="text-4xl font-bold text-primary dark:text-green-200">
+              <p id="dynamic-stat2-number" class="text-4xl font-bold text-primary dark:text-green-200">
                 100%
               </p>
-              <p class="mt-1">
+              <p id="dynamic-stat2-text" class="mt-1">
                 Hecho a mano en Colombia, apoyando el trabajo artesanal local.
               </p>
             </div>
             <div class="border-t border-primary/20 pt-4 dark:border-white/20">
-              <p class="text-4xl font-bold text-primary dark:text-green-200">
+              <p id="dynamic-stat3-number" class="text-4xl font-bold text-primary dark:text-green-200">
                 ♻️
               </p>
-              <p class="mt-1">
+              <p id="dynamic-stat3-text" class="mt-1">
                 Zuncho reciclado transformado en bolsos únicos con diseño y personalidad.
               </p>
             </div>
@@ -2366,6 +2369,86 @@
       }
     }
 
+    // Cargar contenido dinámico desde el servidor (banner, about, stats, instagram)
+    async function loadDynamicContent() {
+      try {
+        const configArray = await API.getAll('config');
+        const siteContent = configArray.find(c => c.id === 'site_content');
+
+        if (siteContent && siteContent.data) {
+          const data = siteContent.data;
+
+          // Actualizar Banner
+          if (data.banner) {
+            const bannerImage = document.getElementById('dynamic-banner-image');
+            const bannerTitle1 = document.getElementById('dynamic-banner-title1');
+            const bannerTitle2 = document.getElementById('dynamic-banner-title2');
+            const bannerDesc = document.getElementById('dynamic-banner-description');
+            const bannerBtn = document.getElementById('dynamic-banner-button');
+
+            if (data.banner.imageUrl && bannerImage) bannerImage.src = data.banner.imageUrl;
+            if (data.banner.title1 && bannerTitle1) bannerTitle1.textContent = data.banner.title1;
+            if (data.banner.title2 && bannerTitle2) bannerTitle2.textContent = data.banner.title2;
+            if (data.banner.description && bannerDesc) bannerDesc.textContent = data.banner.description;
+            if (data.banner.buttonText && bannerBtn) bannerBtn.textContent = data.banner.buttonText;
+          }
+
+          // Actualizar Sobre Nosotros
+          if (data.about) {
+            const aboutTitle = document.getElementById('dynamic-about-title');
+            const aboutDesc = document.getElementById('dynamic-about-description');
+            const feature1 = document.getElementById('dynamic-about-feature1');
+            const feature2 = document.getElementById('dynamic-about-feature2');
+            const feature3 = document.getElementById('dynamic-about-feature3');
+
+            if (data.about.title && aboutTitle) aboutTitle.textContent = data.about.title;
+            if (data.about.description && aboutDesc) aboutDesc.textContent = data.about.description;
+            if (data.about.feature1 && feature1) feature1.textContent = data.about.feature1;
+            if (data.about.feature2 && feature2) feature2.textContent = data.about.feature2;
+            if (data.about.feature3 && feature3) feature3.textContent = data.about.feature3;
+          }
+
+          // Actualizar Estadísticas
+          if (data.stats) {
+            const stat1Num = document.getElementById('dynamic-stat1-number');
+            const stat1Text = document.getElementById('dynamic-stat1-text');
+            const stat2Num = document.getElementById('dynamic-stat2-number');
+            const stat2Text = document.getElementById('dynamic-stat2-text');
+            const stat3Num = document.getElementById('dynamic-stat3-number');
+            const stat3Text = document.getElementById('dynamic-stat3-text');
+
+            if (data.stats.stat1Number && stat1Num) stat1Num.textContent = data.stats.stat1Number;
+            if (data.stats.stat1Text && stat1Text) stat1Text.textContent = data.stats.stat1Text;
+            if (data.stats.stat2Number && stat2Num) stat2Num.textContent = data.stats.stat2Number;
+            if (data.stats.stat2Text && stat2Text) stat2Text.textContent = data.stats.stat2Text;
+            if (data.stats.stat3Number && stat3Num) stat3Num.textContent = data.stats.stat3Number;
+            if (data.stats.stat3Text && stat3Text) stat3Text.textContent = data.stats.stat3Text;
+          }
+
+          // Actualizar Instagram
+          if (data.instagram) {
+            const igTitle = document.getElementById('dynamic-instagram-title');
+            const igDesc = document.getElementById('dynamic-instagram-description');
+            const igBtn = document.getElementById('dynamic-instagram-button');
+
+            if (data.instagram.title && igTitle) igTitle.textContent = data.instagram.title;
+            if (data.instagram.description && igDesc) igDesc.textContent = data.instagram.description;
+            if (data.instagram.buttonText && igBtn) igBtn.textContent = data.instagram.buttonText;
+
+            // Actualizar URL del botón de Instagram
+            if (data.instagram.url && igBtn) {
+              igBtn.onclick = function () {
+                window.open(data.instagram.url, '_blank');
+              };
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error cargando contenido dinámico:', error);
+        // Si hay error, se mantiene el contenido por defecto del HTML
+      }
+    }
+
     async function init() {
       try {
         // Mostrar skeleton mientras carga
@@ -2384,14 +2467,255 @@
 
         // Renderizar UI
         renderCategoryButtons();
-        renderCategoryShowcase();
+        await renderCategoryShowcase();
         renderCatalog();
+
+        // Cargar contenido dinámico (banner, about, etc.)
+        await loadDynamicContent();
+
+        // Verificar si estamos en modo editor visual
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('edit') === 'true') {
+          initVisualEditor();
+        }
       } catch (error) {
         console.error('Error inicializando catálogo:', error);
         const skeleton = document.getElementById('skeleton-loader');
         if (skeleton) {
           skeleton.innerHTML = '<div class="col-span-full text-center py-8 text-red-500"><p>⚠️ Error al cargar productos</p><button onclick="init()" class="mt-2 text-primary underline">Reintentar</button></div>';
         }
+      }
+    }
+
+    // ==========================================
+    // LÓGICA DEL EDITOR VISUAL (WYSIWYG)
+    // ==========================================
+    function initVisualEditor() {
+      console.log('🎨 Iniciando Editor Visual...');
+
+      // 1. Inyectar estilos para el modo edición
+      const style = document.createElement('style');
+      style.textContent = `
+        .editable-highlight {
+          outline: 2px dashed rgba(255, 107, 53, 0.4);
+          outline-offset: 4px;
+          cursor: text;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+        }
+        .editable-highlight:hover, .editable-highlight:focus {
+          outline: 2px solid #ff6b35;
+          background: rgba(255, 107, 53, 0.05);
+        }
+        .img-editable {
+          cursor: pointer;
+          position: relative;
+        }
+        .img-editable:hover {
+          filter: brightness(0.9);
+          outline: 3px solid #ff6b35;
+          outline-offset: -3px;
+        }
+        .img-editable::after {
+
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: rgba(0,0,0,0.7);
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 600;
+          opacity: 0;
+          transition: opacity 0.2s;
+          pointer-events: none;
+        }
+        .img-editable:hover::after {
+          opacity: 1;
+        }
+        /* Barra de herramientas flotante */
+        #editor-toolbar {
+          position: fixed;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: white;
+          padding: 12px 24px;
+          border-radius: 50px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+          display: flex;
+          gap: 15px;
+          align-items: center;
+          z-index: 10000;
+          border: 1px solid #e2e8f0;
+          animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+          from { transform: translate(-50%, 100px); opacity: 0; }
+          to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .editor-btn {
+          background: #ff6b35;
+          color: white;
+          border: none;
+          padding: 10px 24px;
+          border-radius: 30px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: transform 0.1s, background 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .editor-btn:hover { background: #e85a25; transform: translateY(-1px); }
+        .editor-btn:active { transform: translateY(1px); }
+        .mode-badge {
+          background: #e0f2fe;
+          color: #0284c7;
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-weight: 700;
+          font-size: 12px;
+          text-transform: uppercase;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // 2. Elementos editables
+      const editableIds = [
+        'dynamic-banner-title1', 'dynamic-banner-title2', 'dynamic-banner-description', 'dynamic-banner-button',
+        'dynamic-about-title', 'dynamic-about-description',
+        'dynamic-about-feature1', 'dynamic-about-feature2', 'dynamic-about-feature3',
+        'dynamic-stat1-number', 'dynamic-stat1-text',
+        'dynamic-stat2-number', 'dynamic-stat2-text',
+        'dynamic-stat3-number', 'dynamic-stat3-text',
+        'dynamic-instagram-title', 'dynamic-instagram-description', 'dynamic-instagram-button'
+      ];
+
+      const imageIds = ['dynamic-banner-image'];
+
+      // Aplicar contenteditable y clases
+      editableIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.contentEditable = "true";
+          el.classList.add('editable-highlight');
+
+          // Detectar cambios para mostrar la barra de guardado unificada
+          el.addEventListener('input', () => {
+            markAsChanged('site_content', id, el.innerText);
+          });
+
+          // Prevenir saltos de línea en elementos simples
+          if (!id.includes('description')) {
+            el.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') e.preventDefault();
+            });
+          }
+        }
+      });
+
+      // Manejar cambios de imágenes
+      imageIds.forEach(id => {
+        const img = document.getElementById(id);
+        if (img) {
+          img.classList.add('img-editable');
+          img.onclick = () => triggerImageUpload(img);
+        }
+      });
+
+      // Deshabilitar enlaces normales
+      document.querySelectorAll('a, button:not(#edit-save-toolbar button)').forEach(el => {
+        el.addEventListener('click', (e) => {
+          if (!e.target.closest('#edit-save-toolbar') && !e.target.closest('#image-lightbox')) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true);
+      });
+
+      // Input oculto para subida de imágenes
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.id = 'visual-editor-file-input';
+      fileInput.style.display = 'none';
+
+      document.body.appendChild(fileInput);
+    }
+
+    // Trigger para subir imagen
+    function triggerImageUpload(imgElement) {
+      const input = document.getElementById('visual-editor-file-input');
+      input.onchange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            imgElement.src = ev.target.result; // Actualizar visualmente
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        }
+      };
+      input.click();
+    }
+
+    // Función auxiliar para guardar config del sitio
+    async function saveSiteContentConfig(changes) {
+      console.log('💾 Guardando configuración del sitio...');
+      try {
+        // Recolectar datos actuales completos del DOM para asegurar consistencia
+        // (Similar a lo que hacía saveVisualChanges pero usando la estructura correcta)
+        const data = {
+          banner: {
+            title1: document.getElementById('dynamic-banner-title1')?.innerText || '',
+            title2: document.getElementById('dynamic-banner-title2')?.innerText || '',
+            description: document.getElementById('dynamic-banner-description')?.innerText || '',
+            buttonText: document.getElementById('dynamic-banner-button')?.innerText || '',
+            imageUrl: document.getElementById('dynamic-banner-image')?.src || ''
+          },
+          about: {
+            title: document.getElementById('dynamic-about-title')?.innerText || '',
+            description: document.getElementById('dynamic-about-description')?.innerText || '',
+            feature1: document.getElementById('dynamic-about-feature1')?.innerText || '',
+            feature2: document.getElementById('dynamic-about-feature2')?.innerText || '',
+            feature3: document.getElementById('dynamic-about-feature3')?.innerText || ''
+          },
+          stats: {
+            stat1Number: document.getElementById('dynamic-stat1-number')?.innerText || '',
+            stat1Text: document.getElementById('dynamic-stat1-text')?.innerText || '',
+            stat2Number: document.getElementById('dynamic-stat2-number')?.innerText || '',
+            stat2Text: document.getElementById('dynamic-stat2-text')?.innerText || '',
+            stat3Number: document.getElementById('dynamic-stat3-number')?.innerText || '',
+            stat3Text: document.getElementById('dynamic-stat3-text')?.innerText || ''
+          },
+          instagram: {
+            title: document.getElementById('dynamic-instagram-title')?.innerText || '',
+            description: document.getElementById('dynamic-instagram-description')?.innerText || '',
+            buttonText: document.getElementById('dynamic-instagram-button')?.innerText || '',
+            url: 'https://www.instagram.com'
+          }
+        };
+
+        // Preservar valores existentes (como URL)
+        const currentConfig = await API.getAll('config');
+        const existingData = currentConfig.find(c => c.id === 'site_content')?.data;
+        if (existingData && existingData.instagram) {
+          data.instagram.url = existingData.instagram.url;
+        }
+
+        const siteContentData = {
+          id: 'site_content',
+          data: data,
+          updatedAt: new Date().toISOString()
+        };
+
+        await API.update('config', 'site_content', siteContentData);
+        return true;
+      } catch (error) {
+        console.error('Error guardando site_content:', error);
+        return false;
       }
     }
     function escapeAttribute(e) {
@@ -2655,7 +2979,27 @@
     }
     init();
     const searchInputElement = document.getElementById("search-input");
-    function renderCategoryShowcase() {
+
+    // Variable global para almacenar datos personalizados de categorías
+    let savedCategoryFlyersData = {};
+
+    // Cargar datos personalizados de categorías al inicio
+    async function loadSavedCategoryFlyers() {
+      try {
+        // Usar API.getAll que usa la URL correcta del VPS
+        const data = await API.getAll('category_flyers');
+        data.forEach(item => {
+          savedCategoryFlyersData[item.id] = item;
+        });
+      } catch (err) {
+        // Silencioso en producción o log mínimo
+      }
+    }
+
+    async function renderCategoryShowcase() {
+      // Primero cargar los datos personalizados
+      await loadSavedCategoryFlyers();
+
       const e = [...new Set(allProducts.map((e) => e.category))],
         t = document.getElementById("category-details");
       if (!t || 0 === e.length) return;
@@ -2771,21 +3115,24 @@
         };
       let o = "";
       (e.forEach((e, t) => {
-        const i = ((e) => {
-          const t = a[e],
-            n = allProducts.filter((t) => t.category === e);
-          return t
+        const i = ((categoryName) => {
+          const defaultData = a[categoryName];
+          const categoryId = "category-" + categoryName.replace(/\s+/g, "-").toLowerCase();
+          const savedData = savedCategoryFlyersData[categoryId] || {};
+
+          // Base data (default or generic)
+          const baseData = defaultData
             ? {
-              title: e,
-              subtitle: t.subtitle,
-              description: t.description,
-              longDescription: t.longDescription,
-              features: t.features,
+              title: categoryName,
+              subtitle: defaultData.subtitle,
+              description: defaultData.description,
+              longDescription: defaultData.longDescription,
+              features: defaultData.features,
             }
             : {
-              title: e,
+              title: categoryName,
               subtitle: "Hecho con amor",
-              description: `Descubre nuestra exclusiva colección de ${e.toLowerCase()}. Cada pieza es elaborada artesanalmente con dedicación y cuidado especial.`,
+              description: `Descubre nuestra exclusiva colección de ${categoryName.toLowerCase()}. Cada pieza es elaborada artesanalmente con dedicación y cuidado especial.`,
               longDescription: "",
               features: [
                 { icon: "verified", text: "Calidad garantizada" },
@@ -2794,6 +3141,20 @@
                 { icon: "local_shipping", text: "Envío seguro" },
               ],
             };
+
+          // Apply saved customizations if they exist
+          const result = {
+            title: savedData.title || baseData.title,
+            subtitle: savedData.subtitle || baseData.subtitle,
+            description: savedData.description || baseData.description,
+            longDescription: savedData.longDescription || baseData.longDescription,
+            features: baseData.features.map((f, idx) => ({
+              icon: f.icon,
+              text: savedData[`feature_${idx}`] || f.text
+            })),
+          };
+
+          return result;
         })(e),
           s = ((e) =>
             allProducts
@@ -3271,6 +3632,294 @@
         closeCustomerForm();
       }
     });
+
+    // ================== MODO EDICIÓN VISUAL ==================
+
+    // Detectar si estamos en modo edición
+    const urlParams = new URLSearchParams(window.location.search);
+    const isEditMode = urlParams.get('edit') === 'true';
+
+    // Almacenar cambios pendientes
+    let pendingCategoryChanges = {};
+    let customCategoryData = {};
+
+    // Cargar datos personalizados de categorías desde el servidor
+    async function loadCustomCategoryData() {
+      try {
+        const data = await API.getAll('category_flyers');
+        data.forEach(item => {
+          customCategoryData[item.id] = item;
+        });
+      } catch (err) {
+        console.log('No hay datos personalizados de categorías aún o error de conexión');
+      }
+    }
+
+    // Guardar datos de categoría al servidor
+    async function saveCategoryFlyerData(categoryId, data) {
+      try {
+        const payload = { id: categoryId, ...data };
+
+        // Usar API.update que conecta correctamente al VPS
+        // API.update espera (table, id, item)
+        const result = await API.update('category_flyers', categoryId, payload);
+
+        return result && result.success;
+      } catch (err) {
+        console.error('❌ Error guardando categoría:', err);
+        return false;
+      }
+    }
+
+    // Inicializar modo edición
+    if (isEditMode) {
+      // Cargar datos personalizados primero
+      loadCustomCategoryData().then(() => {
+        // Agregar estilos de edición
+        const editStyles = document.createElement('style');
+        editStyles.textContent = `
+          .editable-text {
+            cursor: text !important;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            position: relative;
+          }
+          .editable-text:hover {
+            outline: 2px dashed rgba(255, 94, 94, 0.5) !important;
+            outline-offset: 4px;
+          }
+          .editable-text:focus {
+            outline: 2px solid #ff5e5e !important;
+            outline-offset: 4px;
+            background: rgba(255, 255, 255, 0.1) !important;
+          }
+          .editable-text::before {
+            content: '✏️';
+            position: absolute;
+            top: -20px;
+            right: 0;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+          }
+          .editable-text:hover::before {
+            opacity: 1;
+          }
+          .edit-toolbar {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff5e5e 0%, #e04f4f 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 8px 30px rgba(255, 94, 94, 0.4);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+          }
+          .edit-toolbar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255, 94, 94, 0.5);
+          }
+          .edit-toolbar.has-changes {
+            animation: pulse-save 2s infinite;
+          }
+          .edit-toolbar.saving {
+            pointer-events: none;
+            opacity: 0.7;
+          }
+          @keyframes pulse-save {
+            0%, 100% { box-shadow: 0 8px 30px rgba(255, 94, 94, 0.4); }
+            50% { box-shadow: 0 8px 50px rgba(255, 94, 94, 0.7); }
+          }
+          .edit-mode-indicator {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 94, 94, 0.95);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+          }
+        `;
+        document.head.appendChild(editStyles);
+
+        // Agregar indicador de modo edición
+        const indicator = document.createElement('div');
+        indicator.className = 'edit-mode-indicator';
+        indicator.innerHTML = '🎨 MODO EDICIÓN - Haz clic en textos de categorías para editar';
+        document.body.appendChild(indicator);
+
+        // Agregar barra de herramientas de guardado
+        const toolbar = document.createElement('div');
+        toolbar.className = 'edit-toolbar';
+        toolbar.id = 'edit-save-toolbar';
+        toolbar.style.display = 'none';
+        toolbar.innerHTML = '<span class="material-icons-outlined">save</span> Guardar Cambios';
+        toolbar.onclick = saveAllCategoryChanges;
+        document.body.appendChild(toolbar);
+
+        // Observar cuando se renderice el contenido de categorías
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+              setTimeout(makeShowcaseEditable, 500);
+            }
+          });
+        });
+
+        const categoryDetails = document.getElementById('category-details');
+        if (categoryDetails) {
+          observer.observe(categoryDetails, { childList: true, subtree: true });
+        }
+
+        // También intentar después de que se carguen los productos
+        setTimeout(makeShowcaseEditable, 2000);
+      });
+    }
+
+    // Hacer editables los textos del showcase de categorías
+    function makeShowcaseEditable() {
+      if (!isEditMode) return;
+
+      const showcaseCards = document.querySelectorAll('.showcase-card');
+
+      showcaseCards.forEach(card => {
+        const categoryId = card.id; // e.g., "category-zuncho"
+
+        // Hacer editables los títulos, subtítulos y descripciones
+        const elements = {
+          title: card.querySelector('h3.font-display'),
+          subtitle: card.querySelector('p.font-cursive'),
+          description: card.querySelector('.showcase-content .space-y-4 p:first-child'),
+          longDescription: card.querySelector('.showcase-content .space-y-4 p:last-child'),
+        };
+
+        // También las características
+        const features = card.querySelectorAll('.showcase-content .grid > div span:last-child');
+
+        Object.entries(elements).forEach(([key, el]) => {
+          if (el && !el.hasAttribute('contenteditable')) {
+            el.setAttribute('contenteditable', 'true');
+            el.classList.add('editable-text');
+            el.dataset.categoryId = categoryId;
+            el.dataset.fieldType = key;
+
+            el.addEventListener('input', () => {
+              markAsChanged(categoryId, key, el.textContent);
+            });
+
+            el.addEventListener('blur', () => {
+              markAsChanged(categoryId, key, el.textContent);
+            });
+          }
+        });
+
+        features.forEach((feature, index) => {
+          if (!feature.hasAttribute('contenteditable')) {
+            feature.setAttribute('contenteditable', 'true');
+            feature.classList.add('editable-text');
+            feature.dataset.categoryId = categoryId;
+            feature.dataset.fieldType = `feature_${index}`;
+
+            feature.addEventListener('input', () => {
+              markAsChanged(categoryId, `feature_${index}`, feature.textContent);
+            });
+
+            feature.addEventListener('blur', () => {
+              markAsChanged(categoryId, `feature_${index}`, feature.textContent);
+            });
+          }
+        });
+      });
+    }
+
+    // Marcar cambio pendiente
+    function markAsChanged(categoryId, field, value) {
+      if (!pendingCategoryChanges[categoryId]) {
+        pendingCategoryChanges[categoryId] = {};
+      }
+      pendingCategoryChanges[categoryId][field] = value;
+
+      // Mostrar botón de guardar
+      const toolbar = document.getElementById('edit-save-toolbar');
+      if (toolbar) {
+        toolbar.style.display = 'flex';
+        toolbar.classList.add('has-changes');
+      }
+    }
+
+    // Guardar todos los cambios
+    async function saveAllCategoryChanges() {
+      const toolbar = document.getElementById('edit-save-toolbar');
+      if (toolbar) {
+        toolbar.classList.add('saving');
+        toolbar.innerHTML = '<span class="material-icons-outlined" style="animation: spin 1s linear infinite;">autorenew</span> Guardando...';
+      }
+
+      let allSaved = true;
+
+      for (const [categoryId, changes] of Object.entries(pendingCategoryChanges)) {
+        let success = false;
+
+        if (categoryId === 'site_content') {
+          // Guardar configuración del sitio
+          success = await saveSiteContentConfig(changes);
+        } else {
+          // Guardar categoría normal
+          const existingData = customCategoryData[categoryId] || {};
+          const newData = { ...existingData, ...changes };
+
+          success = await saveCategoryFlyerData(categoryId, newData);
+          if (success) {
+            customCategoryData[categoryId] = { id: categoryId, ...newData };
+          }
+        }
+
+        if (!success) {
+          allSaved = false;
+        }
+      }
+
+      if (allSaved) {
+        pendingCategoryChanges = {};
+        if (toolbar) {
+          toolbar.innerHTML = '<span class="material-icons-outlined">check_circle</span> ¡Guardado!';
+          toolbar.classList.remove('has-changes');
+
+          setTimeout(() => {
+            toolbar.style.display = 'none';
+            toolbar.innerHTML = '<span class="material-icons-outlined">save</span> Guardar Cambios';
+            toolbar.classList.remove('saving');
+          }, 2000);
+        }
+
+        // Notificar al padre (admin) que se guardaron los cambios
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: 'SITE_CONTENT_SAVED' }, '*');
+        }
+      } else {
+        if (toolbar) {
+          toolbar.innerHTML = '<span class="material-icons-outlined">error</span> Error al guardar';
+          toolbar.classList.remove('saving');
+          setTimeout(() => {
+            toolbar.innerHTML = '<span class="material-icons-outlined">save</span> Reintentar';
+          }, 2000);
+        }
+      }
+    }
+
+    // ================== FIN MODO EDICIÓN VISUAL ==================
   </script>
 </body>
 

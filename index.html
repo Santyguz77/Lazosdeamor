@@ -385,6 +385,7 @@
         flex-direction: column;
       }
 
+
       #dashboard .header {
         order: 1;
       }
@@ -400,6 +401,11 @@
       #dashboard .dashboard-charts-section {
         order: 4;
       }
+    }
+
+    #site-content.active {
+      display: flex !important;
+      flex-direction: column;
     }
 
     .products-table-view {
@@ -736,6 +742,9 @@
         </li>
         <li onclick="(showSection('close-cash'), closeMobileMenu())">
           <span class="menu-icon">🔒</span> Cierre de Caja
+        </li>
+        <li onclick="(showSection('site-content'), loadSiteContent(), closeMobileMenu())">
+          <span class="menu-icon">🎨</span> Contenido del Sitio
         </li>
         <li onclick="(showSection('system-config'), closeMobileMenu())">
           <span class="menu-icon">⚙️</span> Configuración
@@ -1179,6 +1188,38 @@
           </div>
         </div>
       </div>
+      <!-- Sección de Contenido del Sitio -->
+      <!-- Sección de Contenido del Sitio (Editor Visual) -->
+      <!-- Sección de Contenido del Sitio (Editor Visual) -->
+      <div id="site-content" class="section" style="padding: 0; min-height: 100vh; flex-direction: column;">
+        <div class="header"
+          style="padding: 15px 25px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); z-index: 10;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h1 style="margin: 0; font-size: 20px;">🎨 Editor Visual</h1>
+            <span
+              style="background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase;">En
+              Vivo</span>
+          </div>
+          <div style="color: #64748b; font-size: 13px; display: flex; gap: 20px; align-items: center;">
+            <span style="display: flex; align-items: center; gap: 6px;"><span class="material-icons-round"
+                style="font-size: 16px;">touch_app</span> Toca cualquier texto para editar</span>
+          </div>
+        </div>
+        <div style="flex: 1; background: #f1f5f9; position: relative; min-height: 800px;">
+          <!-- Cargando... -->
+          <div
+            style="position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; color: #94a3b8; font-weight: 500;">
+            <div style="text-align: center;">
+              <span class="material-icons-round"
+                style="font-size: 40px; animation: spin 1s linear infinite;">autorenew</span>
+              <div style="margin-top: 10px;">Cargando editor...</div>
+            </div>
+          </div>
+          <iframe id="visual-editor-frame" src=""
+            style="width: 100%; height: 100%; min-height: 800px; border: 2px solid red; position: relative; z-index: 1; background: white;"></iframe>
+        </div>
+      </div>
+
       <div id="system-config" class="section">
         <div class="header">
           <h1>Configuración del Sistema</h1>
@@ -1274,7 +1315,8 @@
         <div class="card" style="margin-bottom: 20px">
           <h3 style="color: #4CAF50; margin-bottom: 15px">💾 Respaldo de Datos</h3>
           <p style="color: var(--muted); margin-bottom: 20px">
-            Descarga una copia de seguridad de todos los datos del sistema: productos, pedidos, transacciones y configuración.
+            Descarga una copia de seguridad de todos los datos del sistema: productos, pedidos, transacciones y
+            configuración.
           </p>
           <div style="
                 background: rgba(76, 175, 80, 0.1);
@@ -1336,8 +1378,10 @@
                 </p>
               </div>
             </div>
-            <input type="file" id="backup-file-input" accept=".json" style="display: none" onchange="handleBackupFile(event)">
-            <button class="btn" style="background: #2196F3; border: none; width: 100%" onclick="document.getElementById('backup-file-input').click()">
+            <input type="file" id="backup-file-input" accept=".json" style="display: none"
+              onchange="handleBackupFile(event)">
+            <button class="btn" style="background: #2196F3; border: none; width: 100%"
+              onclick="document.getElementById('backup-file-input').click()">
               📤 Seleccionar Archivo de Backup
             </button>
           </div>
@@ -1440,6 +1484,11 @@
         class="flex flex-col items-center gap-1 text-slate-400 py-2">
         <span class="material-icons-round">insights</span>
         <span class="text-[10px] font-medium">Finanzas</span>
+      </button>
+      <button onclick="(showSection('site-content'), loadSiteContent(), closeMobileMenu())"
+        class="flex flex-col items-center gap-1 text-slate-400 py-2">
+        <span class="material-icons-round">palette</span>
+        <span class="text-[10px] font-medium">Contenido</span>
       </button>
       <button onclick="(showSection('system-config'), closeMobileMenu())"
         class="flex flex-col items-center gap-1 text-slate-400 py-2">
@@ -2026,7 +2075,8 @@
         "orders" === t && renderOrders(),
         "menu-config" === t && renderMenuConfig(),
         "transactions" === t && renderTransactions(),
-        "system-config" === t && updateSystemInfo());
+        "system-config" === t && updateSystemInfo(),
+        "site-content" === t && loadSiteContent());
     }
     async function refreshData() {
       const t = event.target;
@@ -3599,7 +3649,7 @@
         }
       else alert("Operación cancelada.");
     }
-    
+
     // Función para descargar backup completo del sistema
     function downloadFullBackup() {
       const backup = {
@@ -3622,11 +3672,11 @@
           configuracion: AppState.config
         }
       };
-      
+
       const dataStr = JSON.stringify(backup, null, 2);
       const blob = new Blob([dataStr], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      
+
       const fecha = new Date().toISOString().split('T')[0];
       const hora = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
       const link = document.createElement('a');
@@ -3636,88 +3686,88 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      
+
       alert(`✅ Backup completo descargado!\n\n📦 Contenido:\n• ${AppState.menuItems.length} productos\n• ${AppState.orders.length} pedidos\n• ${AppState.transactions.length} transacciones\n• ${AppState.cashClosures.length} cierres de caja`);
     }
-    
+
     // Función para manejar el archivo de backup subido
     function handleBackupFile(event) {
       const file = event.target.files[0];
       if (!file) return;
-      
+
       const reader = new FileReader();
-      reader.onload = async function(e) {
+      reader.onload = async function (e) {
         try {
           const backup = JSON.parse(e.target.result);
-          
+
           // Validar que sea un backup válido
           if (!backup.datos || !backup.metadata) {
             alert('❌ Error: El archivo no parece ser un backup válido de Lazos de Amor.');
             return;
           }
-          
+
           // Mostrar resumen y pedir confirmación
           const stats = backup.estadisticas || {};
           const confirmMsg = `⚠️ RESTAURAR BACKUP\n\nEsto reemplazará TODOS los datos actuales con:\n• ${stats.total_productos || 0} productos\n• ${stats.total_pedidos || 0} pedidos\n• ${stats.total_transacciones || 0} transacciones\n• ${stats.total_cierres_caja || 0} cierres de caja\n\nFecha del backup: ${backup.metadata.fecha ? new Date(backup.metadata.fecha).toLocaleString() : 'Desconocida'}\n\n¿Deseas continuar? Escribe "RESTAURAR" para confirmar:`;
-          
+
           if (prompt(confirmMsg) !== 'RESTAURAR') {
             alert('Operación cancelada.');
             return;
           }
-          
+
           // Restaurar datos
           const datos = backup.datos;
-          
+
           if (datos.productos && Array.isArray(datos.productos)) {
             AppState.menuItems = datos.productos;
             await API.save('menu_items', AppState.menuItems);
           }
-          
+
           if (datos.pedidos && Array.isArray(datos.pedidos)) {
             AppState.orders = datos.pedidos;
             await API.save('orders', AppState.orders);
           }
-          
+
           if (datos.transacciones && Array.isArray(datos.transacciones)) {
             AppState.transactions = datos.transacciones;
             await API.save('transactions', AppState.transactions);
           }
-          
+
           if (datos.cierres_caja && Array.isArray(datos.cierres_caja)) {
             AppState.cashClosures = datos.cierres_caja;
             await API.save('cash_closures', AppState.cashClosures);
           }
-          
+
           if (datos.configuracion) {
             AppState.config = datos.configuracion;
             await API.save('config', [AppState.config]);
           }
-          
+
           // Actualizar interfaz
           renderDashboard();
           renderMenu();
           renderOrders();
           renderTransactions();
           updateSystemInfo();
-          
+
           alert(`✅ Backup restaurado exitosamente!\n\nDatos restaurados:\n• ${AppState.menuItems.length} productos\n• ${AppState.orders.length} pedidos\n• ${AppState.transactions.length} transacciones\n• ${AppState.cashClosures.length} cierres de caja`);
-          
+
         } catch (error) {
           console.error('Error al restaurar backup:', error);
           alert('❌ Error al procesar el archivo: ' + error.message);
         }
       };
-      
-      reader.onerror = function() {
+
+      reader.onerror = function () {
         alert('❌ Error al leer el archivo.');
       };
-      
+
       reader.readAsText(file);
-      
+
       // Limpiar el input para permitir subir el mismo archivo de nuevo
       event.target.value = '';
     }
-    
+
     function updateSystemInfo() {
       ((document.getElementById("info-menu-items").textContent =
         AppState.menuItems.length),
@@ -3882,8 +3932,38 @@
         n = document.getElementById("notifications-menu");
       (e && !e.classList.contains("hidden") && e.classList.add("hidden"),
         n && !n.classList.contains("hidden") && n.classList.add("hidden"));
-    }),
-      init());
+    }));
+
+    // ================ FUNCIONES DE EDITOR VISUAL ================
+
+    // Cargar editor visual
+    function loadSiteContent() {
+      const frame = document.getElementById('visual-editor-frame');
+      if (frame) {
+        // Recargar el iframe con el parámetro de edición para iniciar modo WYSIWYG
+        // Usamos timestamp para evitar caché agresivo
+        frame.src = `catalogo.html?edit=true&t=${Date.now()}`;
+      }
+    }
+
+    // Escuchar mensajes desde el iframe (para notificaciones de guardado)
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.type === 'SITE_CONTENT_SAVED') {
+        // Mostrar notificación de éxito en el admin
+        const notification = document.createElement('div');
+        notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: #fff; padding: 15px 25px; border-radius: 12px; box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4); z-index: 10000; font-size: 14px; font-weight: 600; animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 10px;';
+        notification.innerHTML = '<span style="font-size: 20px;">✅</span> Cambios guardados y publicados correctamente';
+        document.body.appendChild(notification);
+        setTimeout(() => {
+          notification.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => notification.remove(), 300);
+        }, 3000);
+      }
+    });
+
+    // ================ FIN FUNCIONES EDITOR VISUAL ================
+
+    init();
   </script>
 </body>
 
