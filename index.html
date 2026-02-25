@@ -763,6 +763,10 @@
         <div class="header">
           <h1>Dashboard</h1>
           <div style="display: flex; align-items: center; gap: 15px">
+            <button class="btn btn-success" onclick="openQuickSaleModal()"
+              style="display: flex; align-items: center; gap: 8px;">
+              <span class="material-icons-round">shopping_cart</span> Nueva Venta
+            </button>
             <span style="
                   color: #4caf50;
                   font-size: 14px;
@@ -2682,7 +2686,7 @@
                     ? [t.image]
                     : [],
               i = a.length > 0 ? a[0] : "";
-            return `\n\t\t\t\t<tr>\n\t\t\t\t\t<td data-label="Producto">\n\t\t\t\t\t\t<div style="display: flex; align-items: center; gap: 10px;">\n\t\t\t\t\t\t\t<div style="position: relative;">\n\t\t\t\t\t\t\t\t${i ? `<img src="${i}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">` : ""}\n\t\t\t\t\t\t\t\t${a.length > 1 ? `<span style="position: absolute; bottom: -4px; right: -4px; background: var(--accent); color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border: 2px solid white;">+${a.length - 1}</span>` : ""}\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<strong>${t.name}</strong>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Descripción" style="max-width: 200px; color: var(--muted); font-size: 13px;">${t.description || "-"}</td>\n\t\t\t\t\t<td data-label="Categoría"><span class="badge badge-info">${t.category}</span></td>\n\t\t\t\t\t<td data-label="Costo">${Utils.formatCurrency(e)}</td>\n\t\t\t\t\t<td data-label="Precio"><strong>${Utils.formatCurrency(t.price)}</strong></td>\n\t\t\t\t\t<td data-label="Ganancia" style="color: ${n > 0 ? "var(--accent)" : "#999"}; font-weight: 600;">${Utils.formatCurrency(n)}</td>\n\t\t\t\t\t<td data-label="Margen">\n\t\t\t\t\t\t<span class="badge" style="background: ${o > 50 ? "#4caf50" : o > 30 ? "#ff9800" : "#999"}; color: #fff; font-weight: 600;">\n\t\t\t\t\t\t\t${o}%\n\t\t\t\t\t\t</span>\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Estado">\n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tclass="btn btn-small" \n\t\t\t\t\t\t\tonclick="toggleProductAvailability('${t.id}')" \n\t\t\t\t\t\t\tstyle="background: ${t.available ? "#4caf50" : "#666"}; color: #fff; border: none; padding: 6px 14px; font-size: 12px; min-width: 90px;"\n\t\t\t\t\t\t\ttitle="${t.available ? "Click para ocultar del menú" : "Click para mostrar en el menú"}">\n\t\t\t\t\t\t\t${t.available ? "👁️ Visible" : "🚫 Oculto"}\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Acciones">\n\t\t\t\t\t\t<button class="btn btn-small btn-secondary" onclick="editMenuItem('${t.id}')" title="Editar producto">✏️</button>\n\t\t\t\t\t\t<button class="btn btn-small btn-danger" onclick="deleteMenuItem('${t.id}')" title="Eliminar producto">🗑️</button>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t`;
+            return `\n\t\t\t\t<tr>\n\t\t\t\t\t<td data-label="Producto">\n\t\t\t\t\t\t<div style="display: flex; align-items: center; gap: 10px;">\n\t\t\t\t\t\t\t<div style="position: relative;">\n\t\t\t\t\t\t\t\t${i ? `<img src="${i}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">` : ""}\n\t\t\t\t\t\t\t\t${a.length > 1 ? `<span style="position: absolute; bottom: -6px; right: -6px; background: #FF5E5E; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2.5px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); z-index: 2;">+${a.length - 1}</span>` : ""}\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<strong>${t.name}</strong>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Descripción" style="max-width: 200px; color: var(--muted); font-size: 13px;">${t.description || "-"}</td>\n\t\t\t\t\t<td data-label="Categoría"><span class="badge badge-info">${t.category}</span></td>\n\t\t\t\t\t<td data-label="Costo">${Utils.formatCurrency(e)}</td>\n\t\t\t\t\t<td data-label="Precio"><strong>${Utils.formatCurrency(t.price)}</strong></td>\n\t\t\t\t\t<td data-label="Ganancia" style="color: ${n > 0 ? "var(--accent)" : "#999"}; font-weight: 600;">${Utils.formatCurrency(n)}</td>\n\t\t\t\t\t<td data-label="Margen">\n\t\t\t\t\t\t<span class="badge" style="background: ${o > 50 ? "#4caf50" : o > 30 ? "#ff9800" : "#999"}; color: #fff; font-weight: 600;">\n\t\t\t\t\t\t\t${o}%\n\t\t\t\t\t\t</span>\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Estado">\n\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tclass="btn btn-small" \n\t\t\t\t\t\t\tonclick="toggleProductAvailability('${t.id}')" \n\t\t\t\t\t\t\tstyle="background: ${t.available ? "#4caf50" : "#666"}; color: #fff; border: none; padding: 6px 14px; font-size: 12px; min-width: 90px;"\n\t\t\t\t\t\t\ttitle="${t.available ? "Click para ocultar del menú" : "Click para mostrar en el menú"}">\n\t\t\t\t\t\t\t${t.available ? "👁️ Visible" : "🚫 Oculto"}\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Acciones">\n\t\t\t\t\t\t<button class="btn btn-small btn-secondary" onclick="editMenuItem('${t.id}')" title="Editar producto">✏️</button>\n\t\t\t\t\t\t<button class="btn btn-small btn-danger" onclick="deleteMenuItem('${t.id}')" title="Eliminar producto">🗑️</button>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t`;
           })
           .join("")),
         renderProductsCards(AppState.menuItems));
@@ -2698,15 +2702,8 @@
                 o = t.price > 0 ? ((n / t.price) * 100).toFixed(1) : 0,
                 a = o > 50 ? "#10b981" : o > 30 ? "#f59e0b" : "#6b7280";
               return `\n\t\t\t\t<div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; transition: all 0.3s; position: relative; overflow: hidden;" onmouseover="this.style.boxShadow='0 8px 24px rgba(45,90,39,0.12)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'; this.style.transform='translateY(0)'">\n\t\t\t\t\t\n\t\t\t\t\t\x3c!-- Badge de estado --\x3e\n\t\t\t\t\t<div style="position: absolute; top: 12px; right: 12px;">\n\t\t\t\t\t\t<span style="background: ${t.available ? "#dcfce7" : "#f3f4f6"}; color: ${t.available ? "#15803d" : "#6b7280"}; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;">\n\t\t\t\t\t\t\t<span class="material-icons-round" style="font-size: 14px;">${t.available ? "visibility" : "visibility_off"}</span>\n\t\t\t\t\t\t\t${t.available ? "Visible" : "Oculto"}\n\t\t\t\t\t\t</span>\n\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t\t\x3c!-- Imagen y detalles básicos --\x3e\n\t\t\t\t\t<div style="display: flex; gap: 16px; margin-bottom: 16px;">\n\t\t\t\t\t${(() => {
-                const e =
-                  t.images && t.images.length > 0
-                    ? t.images
-                    : t.image
-                      ? [t.image]
-                      : [],
-                  n = e.length > 0 ? e[0] : "";
                 return n
-                  ? `\n\t\t\t\t\t\t\t\t<div style="position: relative; width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: #f8f9fa;">\n\t\t\t\t\t\t\t\t\t<img src="${n}" style="width: 100%; height: 100%; object-fit: cover;">\n\t\t\t\t\t\t\t\t\t${e.length > 1 ? `\n\t\t\t\t\t\t\t\t\t\t<div style="position: absolute; bottom: 4px; right: 4px; background: var(--accent); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">\n\t\t\t\t\t\t\t\t\t\t\t+${e.length - 1}\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t` : ""}\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t`
+                  ? `\n\t\t\t\t\t\t\t\t<div style="position: relative; width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: #f8f9fa;">\n\t\t\t\t\t\t\t\t\t<img src="${n}" style="width: 100%; height: 100%; object-fit: cover;">\n\t\t\t\t\t\t\t\t\t${e.length > 1 ? `\n\t\t\t\t\t\t\t\t\t\t<div style="position: absolute; bottom: 4px; right: 4px; background: #FF5E5E; color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; border: 2.5px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); z-index: 2;">\n\t\t\t\t\t\t\t\t\t\t\t+${e.length - 1}\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t` : ""}\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t`
                   : '\n\t\t\t\t\t\t\t\t<div style="width: 80px; height: 80px; border-radius: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">\n\t\t\t\t\t\t\t\t\t<span class="material-icons-round" style="font-size: 40px; color: #cbd5e1;">checkroom</span>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t';
               })()}\n\t\t\t\t\t\t\t<h3 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 700; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.name}</h3>\n\t\t\t\t\t\t\t<p style="margin: 0 0 8px 0; font-size: 13px; color: #64748b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${t.description || "Sin descripción"}</p>\n\t\t\t\t\t\t\t<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: inline-block;">${t.category}</span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t\t\x3c!-- Información financiera --\x3e\n\t\t\t\t\t<div style="background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 16px;">\n\t\t\t\t\t\t<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">Costo</div>\n\t\t\t\t\t\t\t\t<div style="font-size: 16px; font-weight: 600; color: #ef4444;">${Utils.formatCurrency(e)}</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">Precio</div>\n\t\t\t\t\t\t\t\t<div style="font-size: 16px; font-weight: 700; color: #FF5E5E;">${Utils.formatCurrency(t.price)}</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">Ganancia</div>\n\t\t\t\t\t\t\t\t<div style="font-size: 15px; font-weight: 600; color: ${n > 0 ? "#10b981" : "#6b7280"};">${Utils.formatCurrency(n)}</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<div style="font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;">Margen</div>\n\t\t\t\t\t\t\t\t<div style="font-size: 15px; font-weight: 700; color: ${a};">${o}%</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t\t\x3c!-- Acciones --\x3e\n\t\t\t\t\t<div style="display: flex; gap: 8px;">\n\t\t\t\t\t\t<button onclick="toggleProductAvailability('${t.id}')" style="flex: 1; background: ${t.available ? "#dcfce7" : "#f3f4f6"}; color: ${t.available ? "#15803d" : "#6b7280"}; border: 2px solid ${t.available ? "#bbf7d0" : "#e5e7eb"}; padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">\n\t\t\t\t\t\t\t<span class="material-icons-round" style="font-size: 16px;">${t.available ? "visibility_off" : "visibility"}</span>\n\t\t\t\t\t\t\t${t.available ? "Ocultar" : "Mostrar"}\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<button onclick="editMenuItem('${t.id}')" style="background: #dbeafe; color: #1e40af; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#bfdbfe'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#dbeafe'; this.style.transform='translateY(0)'">\n\t\t\t\t\t\t\t<span class="material-icons-round" style="font-size: 18px;">edit</span>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<button onclick="deleteMenuItem('${t.id}')" style="background: #fee2e2; color: #dc2626; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#fecaca'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#fee2e2'; this.style.transform='translateY(0)'">\n\t\t\t\t\t\t\t<span class="material-icons-round" style="font-size: 18px;">delete</span>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t`;
             })
@@ -2860,22 +2857,37 @@
     }
     function showImagesPreview(t) {
       const e = document.getElementById("item-images-preview");
-      t && 0 !== t.length
-        ? (e.innerHTML = t
+      if (t && 0 !== t.length) {
+        e.innerHTML = t
           .map(
-            (t, e) =>
-              `\n\t\t\t<div style="position: relative; display: inline-block;">\n\t\t\t\t<img src="${t}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid var(--accent);">\n\t\t\t\t<button onclick="removeImage(${e})" style="position: absolute; top: 5px; right: 5px; background: var(--danger); color: #fff; border: 0; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 16px; line-height: 1;">✕</button>\n\t\t\t\t${0 === e ? '<div style="position: absolute; bottom: 5px; left: 5px; background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">PRINCIPAL</div>' : ""}\n\t\t\t</div>\n\t\t`,
+            (t, e) => {
+              const isMain = 0 === e;
+              return `\n\t\t\t<div style="position: relative; display: inline-block; margin: 0 10px 10px 0; transition: all 0.3s;">\n\t\t\t\t<img src="${t}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 12px; border: 3px solid ${isMain ? "var(--accent)" : "rgba(255,255,255,0.1)"}; box-shadow: ${isMain ? "0 4px 12px rgba(45,90,39,0.3)" : "none"};">\n\t\t\t\t<button onclick="removeImage(${e})" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: #fff; border: 2px solid white; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;" title="Eliminar imagen">\n\t\t\t\t\t<span class="material-icons-round" style="font-size: 16px;">close</span>\n\t\t\t\t</button>\n\t\t\t\t${isMain
+                ? '<div style="position: absolute; bottom: 8px; left: 8px; background: var(--accent); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 5; letter-spacing: 0.5px;">⭐ PORTADA</div>'
+                : `<button onclick="setMainImage(${e})" style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.2s; z-index: 5;" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='rgba(0,0,0,0.6)'">MARCAR PRINCIPAL</button>`}\n\t\t\t</div>`;
+            }
           )
-          .join(""))
-        : (e.innerHTML = "");
+          .join("");
+      } else {
+        e.innerHTML = "";
+      }
+    }
+    function setMainImage(t) {
+      const e = JSON.parse(document.getElementById("item-images").value || "[]");
+      if (e[t]) {
+        const n = e.splice(t, 1)[0];
+        e.unshift(n);
+        document.getElementById("item-images").value = JSON.stringify(e);
+        showImagesPreview(e);
+      }
     }
     function removeImage(t) {
-      const e = JSON.parse(
-        document.getElementById("item-images").value || "[]",
-      );
-      (e.splice(t, 1),
-        (document.getElementById("item-images").value = JSON.stringify(e)),
-        showImagesPreview(e));
+      if (confirm("¿Eliminar esta imagen?")) {
+        const e = JSON.parse(document.getElementById("item-images").value || "[]");
+        e.splice(t, 1);
+        document.getElementById("item-images").value = JSON.stringify(e);
+        showImagesPreview(e);
+      }
     }
     function clearImagesPreview() {
       ((document.getElementById("item-images").value = "[]"),
@@ -3055,21 +3067,40 @@
         ? (t.innerHTML = e
           .map(
             (t) =>
-              `\n\t\t\t\t<tr>\n\t\t\t\t\t<td data-label="Fecha">${Utils.formatDate(t.date)}</td>\n\t\t\t\t\t<td data-label="Pedido">${t.tableNumber || "-"}</td>\n\t\t\t\t\t<td data-label="Concepto">\n\t\t\t\t\t\t${t.concept}\n\t\t\t\t\t\t${t.customerData ? `<br><small style="color: var(--muted);">Cliente: ${t.customerData.name}</small>` : ""}\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Monto" style="color: var(--success); font-weight: 600;">${Utils.formatCurrency(t.amount)}</td>\n\t\t\t\t\t<td data-label="Acciones" style="display: flex; gap: 5px;">\n\t\t\t\t\t\t${t.invoicePDF ? `<button class="btn btn-small" style="background: var(--accent);" onclick="viewInvoice('${t.id}')">📄 Factura</button>` : ""}\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t`,
+              `\n\t\t\t\t<tr>\n\t\t\t\t\t<td data-label="Fecha">${Utils.formatDate(t.date)}</td>\n\t\t\t\t\t<td data-label="Pedido">${t.tableNumber || "-"}</td>\n\t\t\t\t\t<td data-label="Concepto">\n\t\t\t\t\t\t${t.concept}\n\t\t\t\t\t\t${t.customerData ? `<br><small style="color: var(--muted);">Cliente: ${t.customerData.name}</small>` : ""}\n\t\t\t\t\t</td>\n\t\t\t\t\t<td data-label="Monto" style="color: var(--success); font-weight: 600;">${Utils.formatCurrency(t.amount)}</td>\n\t\t\t\t\t<td data-label="Acciones" style="display: flex; gap: 5px;">\n\t\t\t\t\t\t${t.invoicePDF ? `<button class="btn btn-small" style="background: var(--accent); white-space: nowrap;" onclick="viewInvoice('${t.id}')">📄 Factura</button>` : ""}\n\t\t\t\t\t\t<button class="btn btn-small btn-danger" onclick="deleteTransaction('${t.id}')" title="Eliminar transacción">🗑️</button>\n\t\t\t\t\t</td>\n\t\t\t\t</tr>\n\t\t\t`,
           )
           .join(""))
         : (t.innerHTML =
           '<tr><td colspan="5" class="text-center" style="color: var(--muted); padding: 40px;">No hay transacciones registradas</td></tr>');
     }
     async function deleteTransaction(t) {
-      confirm("¿Eliminar esta transacción?") &&
-        ((AppState.transactions = AppState.transactions.filter(
-          (e) => e.id !== t,
-        )),
-          await API.save("transactions", AppState.transactions),
-          renderTransactions(),
-          renderDashboard(),
-          Utils.showNotification("Transacción eliminada", "success"));
+      if (!confirm("⚠️ ¿Eliminar esta transacción de forma permanente? \n\nEsto también eliminará el pedido asociado si existe.")) return;
+
+      const transaction = AppState.transactions.find(tr => tr.id === t);
+      if (!transaction) return;
+
+      showOperationLoading("Eliminando transacción...");
+      try {
+        // 1. Eliminar la transacción del servidor
+        await API.delete("transactions", t);
+
+        // 2. Si tiene un pedido asociado, eliminarlo también
+        if (transaction.orderId) {
+          await API.delete("orders", transaction.orderId);
+        }
+
+        // 3. Recargar datos y refrescar interfaz
+        await loadInitialData();
+        renderTransactions();
+        renderDashboard();
+        renderOrders();
+
+        hideOperationStatusModal();
+        Utils.showNotification("Transacción y pedido eliminados correctamente", "success");
+      } catch (err) {
+        console.error("Error al eliminar transacción:", err);
+        showOperationError("No se pudo eliminar la transacción. Revisa tu conexión.");
+      }
     }
     function viewInvoice(t) {
       const e = AppState.transactions.find((e) => e.id === t);
@@ -3112,6 +3143,14 @@
         (currentOrderTable = null),
         (currentOrderItems = []));
     }
+    function openQuickSaleModal() {
+      currentOrderTable = { id: 'quick-sale', number: 'Venta Directa', isQuickSale: true };
+      currentOrderItems = [];
+      document.getElementById("order-modal-title").textContent = "🎀 Nueva Venta Directa";
+      renderOrderModalMenu();
+      updateOrderSummary();
+      document.getElementById("order-modal").classList.add("show");
+    }
     function renderOrderModalMenu() {
       const t = [
         ...new Set(
@@ -3123,11 +3162,13 @@
       document.getElementById("order-menu-items").innerHTML = t
         .map(
           (t) =>
-            `\n\t\t\t\t<div style="margin-bottom: 25px;">\n\t\t\t\t\t<h4 style="color: var(--accent); margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 8px;">${t}</h4>\n\t\t\t\t\t<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">\n\t\t\t\t\t\t${AppState.menuItems
+            `\n\t\t\t\t<div style="margin-bottom: 25px;">\n\t\t\t\t\t<h4 style="color: var(--accent); margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 8px;">${t}</h4>\n\t\t\t\t\t<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;">\n\t\t\t\t\t\t${AppState.menuItems
               .filter((e) => e.category === t && e.available)
               .map(
-                (t) =>
-                  `\n\t\t\t\t\t\t\t\t<div class="menu-item-btn" onclick="addItemToOrder('${t.id}')" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent;" onmouseover="this.style.borderColor='var(--accent)'; this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.borderColor='transparent'; this.style.background='rgba(255,255,255,0.05)'">\n\t\t\t\t\t\t\t\t\t<div style="font-weight: 600; margin-bottom: 5px;">${t.name}</div>\n\t\t\t\t\t\t\t\t\t<div style="color: var(--accent); font-size: 18px; font-weight: 700;">${Utils.formatCurrency(t.price)}</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t`,
+                (t) => {
+                  const img = t.images && t.images.length > 0 ? t.images[0] : (t.image || "");
+                  return `\n\t\t\t\t\t\t\t\t<div class="menu-item-btn" onclick="addItemToOrder('${t.id}')" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; display: flex; align-items: center; gap: 12px;" onmouseover="this.style.borderColor='var(--accent)'; this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.borderColor='transparent'; this.style.background='rgba(255,255,255,0.05)'">\n\t\t\t\t\t\t\t\t\t${img ? `<img src="${img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">` : `<div style="width: 50px; height: 50px; background: rgba(0,0,0,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><span class="material-icons-round" style="color: rgba(255,255,255,0.3);">image</span></div>`}\n\t\t\t\t\t\t\t\t\t<div style="flex: 1; overflow: hidden;">\n\t\t\t\t\t\t\t\t\t\t<div style="font-weight: 600; font-size: 14px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.name}</div>\n\t\t\t\t\t\t\t\t\t\t<div style="color: var(--accent); font-size: 16px; font-weight: 700;">${Utils.formatCurrency(t.price)}</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t`;
+                }
               )
               .join("")}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t`,
         )
@@ -3184,58 +3225,107 @@
     }
     let isSavingOrder = !1;
     async function saveOrderFromModal() {
-      if (!isSavingOrder)
-        if (currentOrderTable && 0 !== currentOrderItems.length) {
-          isSavingOrder = !0;
-          try {
-            autoRefreshInterval && clearInterval(autoRefreshInterval);
-            const t = currentOrderItems.reduce(
-              (t, e) => t + e.price * e.quantity,
-              0,
-            ),
-              e = AppState.tables.find((t) => t.id === currentOrderTable.id);
-            if (!e) throw new Error("Mesa no encontrada");
-            if (e.currentOrder) {
-              const n = AppState.orders.find((t) => t.id === e.currentOrder);
-              n &&
-                ((n.items = [...currentOrderItems]),
-                  (n.total = t),
-                  (n.updatedAt = new Date().toISOString()));
+      if (!isSavingOrder) {
+        if (currentOrderItems.length === 0) return alert("⚠️ Agrega al menos un producto");
+
+        isSavingOrder = !0;
+        try {
+          autoRefreshInterval && clearInterval(autoRefreshInterval);
+          const totalAmount = currentOrderItems.reduce((t, e) => t + e.price * e.quantity, 0);
+
+          if (currentOrderTable && currentOrderTable.isQuickSale) {
+            // Lógica de Venta Directa (Completar de una vez)
+            const newOrder = {
+              id: Utils.generateId(),
+              items: [...currentOrderItems],
+              total: totalAmount,
+              status: "completed",
+              createdAt: new Date().toISOString(),
+              completedAt: new Date().toISOString(),
+              tableNumber: "Venta Directa"
+            };
+
+            AppState.orders.push(newOrder);
+
+            // Generar factura y registrar transacción
+            const pdfData = await generateInvoicePDF(newOrder);
+            const transaction = {
+              id: Utils.generateId(),
+              orderId: newOrder.id,
+              tableNumber: "Venta Directa",
+              amount: totalAmount,
+              type: "sale",
+              date: new Date().toISOString(),
+              concept: `Venta Directa - ${newOrder.items.length} productos`,
+              invoicePDF: pdfData
+            };
+
+            AppState.transactions.push(transaction);
+
+            await Promise.all([
+              API.save("orders", AppState.orders),
+              API.save("transactions", AppState.transactions),
+            ]);
+
+            await loadInitialData();
+            alert("✅ Venta realizada y registrada exitosamente");
+            closeOrderModal();
+            renderAllSections();
+          } else if (currentOrderTable) {
+            // Lógica de Pedido de Mesa
+            const e = AppState.tables ? AppState.tables.find((t) => t.id === currentOrderTable.id) : null;
+            // Si AppState.tables no existe (como parece ser el caso en este admin simplificado), 
+            // tratamos todos los pedidos como de catálogo si no tienen mesa.
+
+            if (e) {
+              if (e.currentOrder) {
+                const n = AppState.orders.find((t) => t.id === e.currentOrder);
+                n && ((n.items = [...currentOrderItems]), (n.total = totalAmount), (n.updatedAt = new Date().toISOString()));
+              } else {
+                const n = {
+                  id: Utils.generateId(),
+                  tableId: e.id,
+                  tableNumber: e.number,
+                  items: [...currentOrderItems],
+                  total: totalAmount,
+                  status: "pending",
+                  createdAt: new Date().toISOString(),
+                };
+                AppState.orders.push(n);
+                e.currentOrder = n.id;
+                e.status = "occupied";
+              }
+              await Promise.all([
+                API.save("orders", AppState.orders),
+                API.save("tables", AppState.tables),
+              ]);
             } else {
+              // Pedido genérico (Catálogo/Admin)
               const n = {
                 id: Utils.generateId(),
-                tableId: e.id,
-                tableNumber: e.number,
                 items: [...currentOrderItems],
-                total: t,
+                total: totalAmount,
                 status: "pending",
                 createdAt: new Date().toISOString(),
+                tableNumber: "Administración"
               };
-              (AppState.orders.push(n),
-                (e.currentOrder = n.id),
-                (e.status = "occupied"));
+              AppState.orders.push(n);
+              await API.save("orders", AppState.orders);
             }
-            (await Promise.all([
-              API.save("orders", AppState.orders),
-              API.save("tables", AppState.tables),
-            ]),
-              await loadInitialData(),
-              closeOrderModal(),
-              renderAllSections());
-          } catch (t) {
-            console.error("Error guardando pedido:", t);
-            try {
-              (await loadInitialData(), renderAllSections());
-            } catch (t) {
-              console.error("No se pudo recargar datos:", t);
-            }
-            alert(
-              "❌ ERROR AL GUARDAR PEDIDO\n\nNo se pudo guardar en el servidor.\nVerifica tu conexión e intenta nuevamente.",
-            );
-          } finally {
-            ((isSavingOrder = !1), startAutoRefresh());
+
+            await loadInitialData();
+            closeOrderModal();
+            renderAllSections();
+            alert("✅ Pedido guardado exitosamente");
           }
-        } else alert("⚠️ Agrega al menos un producto");
+        } catch (t) {
+          console.error("Error guardando pedido:", t);
+          alert("❌ ERROR AL GUARDAR\n\nNo se pudo sincronizar con el servidor.");
+        } finally {
+          isSavingOrder = !1;
+          startAutoRefresh();
+        }
+      }
     }
     function viewTableDetails(t) {
       const e = AppState.tables.find((e) => e.id === t);
