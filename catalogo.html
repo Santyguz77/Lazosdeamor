@@ -2342,19 +2342,32 @@
     // Función optimizada para cargar solo productos del catálogo
     async function loadCatalogProducts() {
       try {
-        // Solo cargar productos, no otros datos innecesarios
-        const products = await API.getAll('menu_items');
+        console.log('📡 Cargando productos optimizados desde el servidor...');
+        // Solicitar solo las columnas esenciales para el renderizado inicial
+        const products = await API.getAll('menu_items', {
+          columns: 'id,name,price,category,image,available'
+        });
+
+        if (!products || !Array.isArray(products)) {
+          throw new Error('Formato de datos inválido desde el servidor');
+        }
         AppState.menuItems = products;
+        console.log(`✅ ${products.length} productos cargados de forma optimizada.`);
         return products;
       } catch (error) {
-        console.error('Error cargando productos:', error);
+        console.error('❌ Error cargando productos:', error);
+
         // Intentar usar caché local si falla el servidor
         const cached = localStorage.getItem('lazos_products_cache');
         if (cached) {
-          console.log('Usando caché local de productos');
-          const products = JSON.parse(cached);
-          AppState.menuItems = products;
-          return products;
+          console.log('💾 Usando caché local de productos (Modo Offline)');
+          try {
+            const products = JSON.parse(cached);
+            AppState.menuItems = products;
+            return products;
+          } catch (e) {
+            console.error('❌ Error al parsear caché:', e);
+          }
         }
         throw error;
       }
@@ -2363,13 +2376,17 @@
     // Guardar productos en caché local (Optimizado)
     function cacheProducts(products) {
       try {
-        // Guardar versión minimizada para ahorrar espacio
+        // Guardar versión de respaldo para offline
         const minimized = products.map(p => ({
           id: p.id,
           name: p.name,
           category: p.category,
           price: p.price,
-          image: p.image
+          image: p.image,
+          available: p.available !== false, // Crucial: No olvidar el estado de disponibilidad
+          description: p.description || "",
+          images: p.images || [],
+          isNew: p.isNew || false
         }));
         localStorage.setItem('lazos_products_cache', JSON.stringify(minimized));
       } catch (e) {
@@ -2467,28 +2484,31 @@
     }
 
     async function init() {
+      const skeleton = document.getElementById('skeleton-loader');
       try {
-        // Mostrar skeleton mientras carga
-        const skeleton = document.getElementById('skeleton-loader');
         if (skeleton) skeleton.style.display = 'grid';
 
-        // Cargar solo productos (optimizado)
-        const products = await loadCatalogProducts();
-        allProducts = products;
+        // Intentar cargar productos
+        let products = [];
+        try {
+          products = await loadCatalogProducts();
+          allProducts = products;
+          cacheProducts(products);
+        } catch (e) {
+          console.error('No se pudieron cargar productos:', e);
+          // Si falló incluso el caché o no había, allProducts estará vacío
+          allProducts = AppState.menuItems || [];
+        }
 
-        // Guardar en caché para próximas visitas
-        cacheProducts(products);
-
-        // Ocultar skeleton
         if (skeleton) skeleton.style.display = 'none';
 
-        // Renderizar UI
+        // Renderizar componentes principales
         renderCategoryButtons();
         await renderCategoryShowcase();
         renderCatalog();
 
-        // Cargar contenido dinámico (banner, about, etc.)
-        await loadDynamicContent();
+        // Cargar contenido dinámico (banner, about, etc.) en segundo plano
+        loadDynamicContent().catch(err => console.warn('Contenido dinámico no disponible:', err));
 
         // Verificar si estamos en modo editor visual
         const urlParams = new URLSearchParams(window.location.search);
@@ -2496,10 +2516,18 @@
           initVisualEditor();
         }
       } catch (error) {
-        console.error('Error inicializando catálogo:', error);
-        const skeleton = document.getElementById('skeleton-loader');
+        console.error('Error crítico en inicialización:', error);
         if (skeleton) {
-          skeleton.innerHTML = '<div class="col-span-full text-center py-8 text-red-500"><p>⚠️ Error al cargar productos</p><button onclick="init()" class="mt-2 text-primary underline">Reintentar</button></div>';
+          skeleton.innerHTML = `
+            <div class="col-span-full text-center py-20 px-4">
+              <div class="text-6xl mb-4">✨</div>
+              <h3 class="text-2xl font-bold text-primary mb-2">Estamos preparando algo especial</h3>
+              <p class="text-slate-500 mb-6">Hubo un pequeño inconveniente al cargar el catálogo.</p>
+              <button onclick="window.location.reload()" class="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all">
+                Intentar de nuevo
+              </button>
+            </div>
+          `;
         }
       }
     }
@@ -3413,39 +3441,77 @@
         n
       );
     }
-    function openProductModal(e) {
-      const t = allProducts.find((t) => t.id === e);
-      if (!t) return;
+    async function openProductModal(id) {
       const a = document.getElementById("product-modal"),
-        n = document.getElementById("modal-body"),
-        o = t.available ? "Disponible" : "Agotado",
-        i = t.available ? "" : "block",
-        s = t.available ? "available" : "soldout",
-        l = t.category || "Accesorios",
-        r = `https://api.whatsapp.com/send?phone=573202434814&text=${encodeURIComponent(`Hola 👋, me interesa la prenda "${t.name}" de Lazos de Amor. ¿Podrían contarme más detalles?`)}`,
-        d = t.available
-          ? `<button class="add-to-cart-modal-btn" type="button" onclick="addToCart('${t.id}')">🛍️ Agregar al carrito</button>`
-          : '<button class="add-to-cart-modal-btn" type="button" disabled>Agotado temporalmente</button>',
-        c =
-          t.images && t.images.length > 0
-            ? t.images
-            : t.image
-              ? [t.image]
-              : [];
-      let u = "";
-      ((u =
-        c.length > 0
-          ? `\n                    <div class="modal-image" style="position: relative;">\n                        <div id="modal-image-carousel" style="position: relative; width: 100%; height: 100%; overflow: hidden;">\n                            ${c.map((e, a) => `\n                                <img src="${e}" alt="${t.name} - Imagen ${a + 1}" \n                                     class="zoomable-image"\n                                     onclick="openLightbox('${e}')"\n                                     style="position: ${0 === a ? "relative" : "absolute"}; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; ${0 === a ? "" : "opacity: 0; pointer-events: none;"}" \n                                     data-image-index="${a}">\n                            `).join("")}\n                        </div>\n                        <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px; z-index: 10;">\n                            <span class="material-icons-outlined" style="font-size: 16px;">zoom_in</span>\n                            Toca para ampliar\n                        </div>\n                        ${c.length > 1 ? `\n                            <button onclick="changeModalImage(-1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10;" onmouseover="this.style.background='rgba(255,255,255,1)'" onmouseout="this.style.background='rgba(255,255,255,0.9)'">\n                                <span class="material-icons-outlined">chevron_left</span>\n                            </button>\n                            <button onclick="changeModalImage(1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10;" onmouseover="this.style.background='rgba(255,255,255,1)'" onmouseout="this.style.background='rgba(255,255,255,0.9)'">\n                                <span class="material-icons-outlined">chevron_right</span>\n                            </button>\n                            <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10;">\n                                ${c.map((e, t) => `\n                                    <div onclick="setModalImage(${t})" style="width: 8px; height: 8px; border-radius: 50%; background: ${0 === t ? "white" : "rgba(255,255,255,0.5)"}; cursor: pointer; transition: all 0.3s;" data-dot-index="${t}"></div>\n                                `).join("")}\n                            </div>\n                        ` : ""}\n                    </div>\n                `
-          : '<div class="modal-image"><div class="text-6xl opacity-30">👗</div></div>'),
-        (n.innerHTML = `\n                ${u}\n                <div class="modal-details">\n                    <div class="modal-meta">\n                        ${t.isNew ? '<span class="modal-badge">✨ NUEVO HALLAZGO</span>' : ""}\n                        <span class="modal-chip accent">\n                            ${l}\n                        </span>\n                        <span class="modal-chip ${s}">\n                            <span class="material-symbols-outlined text-sm">${i}</span>\n                            ${o}\n                        </span>\n                    </div>\n                    <h2 class="modal-title">${t.name}</h2>\n                    <div class="modal-price-block">\n                        <span class="modal-price">${Utils.formatCurrency(t.price)}</span>\n                        <span class="modal-price-caption">Incluye limpieza profesional y control de calidad</span>\n                    </div>\n                    <div class="modal-description">\n                        ${t.description || "Accesorio elaborado con amor y dedicación. Perfecto para crear momentos especiales y detalles únicos."}\n                    </div>\n                    <ul class="modal-highlights">\n                        <li>Inspección de calidad y elaboración realizada por el equipo Lazos de Amor.</li>\n                        <li>Empaque reutilizable y envío compensado en carbono.</li>\n                        <li>Compra segura con cambios fáciles dentro de los 7 días posteriores.</li>\n                    </ul>\n                    <div class="modal-actions">\n                        ${d}\n                        <a class="modal-secondary-action" href="${r}" target="_blank" rel="noopener">\n                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>\n                            Consultar por WhatsApp\n                        </a>\n                    </div>\n                </div>\n            `));
-      const p = a.querySelector(".modal-content"),
-        m = () => {
-          ((n.scrollTop = 0), p && (p.scrollTop = 0), (a.scrollTop = 0));
-        };
-      (m(),
-        a.classList.add("active"),
-        (document.body.style.overflow = "hidden"),
-        requestAnimationFrame(m));
+        n = document.getElementById("modal-body");
+
+      // Mostrar estado de carga inicial en el modal
+      n.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 20px;">
+          <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <p style="color: var(--text-sub-light); font-weight: 500;">Cargando detalles increíbles...</p>
+        </div>
+        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+      `;
+      a.classList.add("active");
+      document.body.style.overflow = "hidden";
+
+      try {
+        let t = allProducts.find((p) => p.id === id);
+
+        // Si el producto no tiene descripción o imágenes, cargar los datos completos del servidor
+        // (Esto es necesario porque el listado inicial es optimizado/parcial)
+        if (!t || (!t.description && !t.images) || (t.images && t.images.length === 0)) {
+          console.log(`📡 Obteniendo detalles completos del producto: ${id}`);
+          const fullProduct = await API.getById('menu_items', id);
+          if (fullProduct) {
+            // Actualizar en memoria para futuras aperturas
+            const idx = allProducts.findIndex(p => p.id === id);
+            if (idx !== -1) allProducts[idx] = fullProduct;
+            t = fullProduct;
+          }
+        }
+
+        if (!t) {
+          n.innerHTML = '<div class="p-10 text-center">Producto no encontrado</div>';
+          return;
+        }
+
+        const o = t.available ? "Disponible" : "Agotado",
+          i = t.available ? "" : "block",
+          s = t.available ? "available" : "soldout",
+          l = t.category || "Accesorios",
+          r = `https://api.whatsapp.com/send?phone=573202434814&text=${encodeURIComponent(`Hola 👋, me interesa la prenda "${t.name}" de Lazos de Amor. ¿Podrían contarme más detalles?`)}`,
+          d = t.available
+            ? `<button class="add-to-cart-modal-btn" type="button" onclick="addToCart('${t.id}')">🛍️ Agregar al carrito</button>`
+            : '<button class="add-to-cart-modal-btn" type="button" disabled>Agotado temporalmente</button>',
+          c =
+            t.images && t.images.length > 0
+              ? t.images
+              : t.image
+                ? [t.image]
+                : [];
+        let u = "";
+        u =
+          c.length > 0
+            ? `\n                    <div class="modal-image" style="position: relative;">\n                        <div id="modal-image-carousel" style="position: relative; width: 100%; height: 100%; overflow: hidden;">\n                            ${c.map((e, a) => `\n                                <img src="${e}" alt="${t.name} - Imagen ${a + 1}" \n                                     class="zoomable-image"\n                                     onclick="openLightbox('${e}')"\n                                     style="position: ${0 === a ? "relative" : "absolute"}; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; ${0 === a ? "" : "opacity: 0; pointer-events: none;"}" \n                                     data-image-index="${a}">\n                            `).join("")}\n                        </div>\n                        <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px; z-index: 10;">\n                            <span class="material-icons-outlined" style="font-size: 16px;">zoom_in</span>\n                            Toca para ampliar\n                        </div>\n                        ${c.length > 1 ? `\n                            <button onclick="changeModalImage(-1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10;" onmouseover="this.style.background='rgba(255,255,255,1)'" onmouseout="this.style.background='rgba(255,255,255,0.9)'">\n                                <span class="material-icons-outlined">chevron_left</span>\n                            </button>\n                            <button onclick="changeModalImage(1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10;" onmouseover="this.style.background='rgba(255,255,255,1)'" onmouseout="this.style.background='rgba(255,255,255,0.9)'">\n                                <span class="material-icons-outlined">chevron_right</span>\n                            </button>\n                            <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10;">\n                                ${c.map((e, t) => `\n                                    <div onclick="setModalImage(${t})" style="width: 8px; height: 8px; border-radius: 50%; background: ${0 === t ? "white" : "rgba(255,255,255,0.5)"}; cursor: pointer; transition: all 0.3s;" data-dot-index="${t}"></div>\n                                `).join("")}\n                            </div>\n                        ` : ""}\n                    </div>\n                `
+            : '<div class="modal-image"><div class="text-6xl opacity-30">👗</div></div>';
+        n.innerHTML = `\n                ${u}\n                <div class="modal-details">\n                    <div class="modal-meta">\n                        ${t.isNew ? '<span class="modal-badge">✨ NUEVO HALLAZGO</span>' : ""}\n                        <span class="modal-chip accent">\n                            ${l}\n                        </span>\n                        <span class="modal-chip ${s}">\n                            <span class="material-symbols-outlined text-sm">${i}</span>\n                            ${o}\n                        </span>\n                    </div>\n                    <h2 class="modal-title">${t.name}</h2>\n                    <div class="modal-price-block">\n                        <span class="modal-price">${Utils.formatCurrency(t.price)}</span>\n                        <span class="modal-price-caption">Incluye limpieza profesional y control de calidad</span>\n                    </div>\n                    <div class="modal-description">\n                        ${t.description || "Accesorio elaborado con amor y dedicación. Perfecto para crear momentos especiales y detalles únicos."}\n                    </div>\n                    <ul class="modal-highlights">\n                        <li>Inspección de calidad y elaboración realizada por el equipo Lazos de Amor.</li>\n                        <li>Empaque reutilizable y envío compensado en carbono.</li>\n                        <li>Compra segura con cambios fáciles dentro de los 7 días posteriores.</li>\n                    </ul>\n                    <div class="modal-actions">\n                        ${d}\n                        <a class="modal-secondary-action" href="${r}" target="_blank" rel="noopener">\n                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>\n                            Consultar por WhatsApp\n                        </a>\n                    </div>\n                </div>\n            `;
+        const p = a.querySelector(".modal-content"),
+          m = () => {
+            ((n.scrollTop = 0), p && (p.scrollTop = 0), (a.scrollTop = 0));
+          };
+        (m(),
+          requestAnimationFrame(m));
+      } catch (err) {
+        console.error("Error al abrir detalles del producto:", err);
+        n.innerHTML = `
+          <div class="p-10 text-center">
+            <p class="mb-4">No se pudieron cargar los detalles completos.</p>
+            <button onclick="openProductModal('${id}')" class="btn-submit">Reintentar</button>
+          </div>
+        `;
+      }
     }
     updateCartUI();
     let currentModalImageIndex = 0,

@@ -29,10 +29,22 @@ const Storage = {
 
 // Cliente API - Solo backend, sin localStorage
 const API = {
-	async getAll(table) {
+	async getAll(table, options = {}) {
 		try {
-			const response = await fetch(`${API_URL}/${table}`, {
-				timeout: 10000 // 10 segundos timeout
+			const { limit, offset, columns } = options;
+			let query = '';
+			const params = [];
+
+			if (limit) params.push(`limit=${limit}`);
+			if (offset) params.push(`offset=${offset}`);
+			if (columns) params.push(`columns=${columns}`);
+
+			if (params.length > 0) {
+				query = `?${params.join('&')}`;
+			}
+
+			const response = await fetch(`${API_URL}/${table}${query}`, {
+				timeout: 15000 // Aumentado a 15 segundos para payloads grandes
 			});
 			if (!response.ok) {
 				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -41,7 +53,19 @@ const API = {
 			return data;
 		} catch (error) {
 			console.error(`Error obteniendo ${table}:`, error);
-			// No mostrar notificación aquí, se maneja en el código llamante
+			throw error;
+		}
+	},
+
+	async getById(table, id) {
+		try {
+			const response = await fetch(`${API_URL}/${table}/${id}`);
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+			}
+			return await response.json();
+		} catch (error) {
+			console.error(`Error obteniendo ${table}/${id}:`, error);
 			throw error;
 		}
 	},
